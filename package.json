@@ -71,6 +71,8 @@
         ]
     },
     "dependencies": {
+        "bootstrap-vue": "^2.17.3",
+        "btable": "^1.0.0",
         "webpack": "^4.44.2"
     }
 }
