@@ -28,7 +28,7 @@ var index = {
     },
     methods: {
         clickRow(row) {
-            this.$emit('row-clicked', row);
+            this.$emit('row-clicked', this.items[row]);
         },
     },
     render(h) {
@@ -50,14 +50,12 @@ var index = {
 
         const tableRows = this.items.map((item, rowNumber) => {
             let cells = this.fields.map(field => {
-                if (field == 'formatter') {
-                    return h('td', [item[field].call()]);
+                if (field['formatter']) {
+                    return h('td', [field['formatter'](item[field.key], field.key, item)]);
                 }
-                if (field == 'actions') {
-                    return h('slot', [item[field]]);
-                }
-                return h('td', [item[field[this.valueField]]]);
+                return h('td', [item[field['key']]]);
             });
+            const slots = h('div', {attrs: {name: 'actions'}, props: {slot: this.$slots.default}}, 'hallo!');
             return h(
                 'tr',
                 {
@@ -66,10 +64,9 @@ var index = {
                     },
                     on: {click: () => this.clickRow(rowNumber)},
                 },
-                [cells]
+                [[cells, slots]]
             );
         });
-
         const tableBody = h('tbody', [tableRows]);
         const minimalTable = h(
             'table',
