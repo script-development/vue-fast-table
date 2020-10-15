@@ -9,57 +9,63 @@ const generateRandomString = len => Array.from(crypto.getRandomValues(new Uint8A
 new Vue({
     data: {
         valueField: '',
-        numberOfRows: 100,
-        numberOfFields: 5,
+        numberOfRows: 10,
+        numberOfColumns: 5,
         formatter: '',
         useFormatterFunction: true,
-        fields: [],
+        useActions: true,
+        columns: [],
         items: [],
-        field: {},
+        column: {},
         item: {},
     },
     methods: {
         createData() {
-            if (this.fields.length < this.numberOfFields) {
-                for (let j = 0; j < this.numberOfFields; j++) {
-                    let field = {id: j, label: generateRandomString(5)};
-                    this.fields.push(field);
+            if (this.columns.length < this.numberOfColumns) {
+                for (let j = 0; j < this.numberOfColumns; j++) {
+                    let column = {id: j, label: generateRandomString(5)};
+                    this.columns.push(column);
                 }
-                if (this.useFormatterFunction) {
-                    this.fields.push('formatter');
+                if (this.useFormatterFunction && !this.columns.includes('formatter')) {
+                    this.columns.push('formatter');
+                }
+                if (this.useActions && !this.columns.includes('actions')) {
+                    this.columns.push('actions');
                 }
             }
+            console.log(this.columns);
             for (let i = this.items.length; i < this.numberOfRows; i++) {
                 let item = {};
-                for (let field of this.fields) {
-                    if (field == 'formatter') {
-                        item[field] = () => {
+                for (let column of this.columns) {
+                    if (column == 'formatter') {
+                        item[column] = () => {
                             if (this.numberOfRows % 2 == 0) {
                                 return 'Even!';
                             }
                             return 'Oneven!';
                         };
-                        break;
                     }
-                    item[field] = generateRandomString(10);
+                    if (column == 'actions') {
+                        item[column] = '<template><div><span>Hallo!</span></div></template>';
+                    }
+                    item[column.label] = generateRandomString(10);
                 }
                 this.items.push(item);
             }
         },
         addRow() {
-            console.time('addRow');
             this.numberOfRows++;
             this.createData();
-            console.timeEnd('addRow');
         },
     },
     mounted() {
         this.createData();
     },
     render(h) {
-        const table = h(minimalTable, {props: {fields: this.fields, items: this.items}});
-        const btable = h('b-table', {props: {fields: this.fields, items: this.items}});
+        const table = h(minimalTable, {props: {fields: this.columns, items: this.items}}, [h('template', 'hallo!')]);
+        // const btable = h('b-table', {props: {columns: this.columns, items: this.items}});
         const addButton = h('button', {on: {click: this.addRow}}, 'Voeg een rij toe');
-        return h('div', [addButton, table, btable]);
+        return h('div', [addButton, table]);
+        // return h('div', [addButton, table, btable]);
     },
 }).$mount('#app');
