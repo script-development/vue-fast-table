@@ -25,6 +25,11 @@ var index = {
             required: false,
             default: () => 20,
         },
+        itemKey: {
+            type: String,
+            required: false,
+            default: () => 'name',
+        },
     },
     methods: {
         clickRow(row) {
@@ -42,7 +47,9 @@ var index = {
             [
                 h('tr', {attrs: {role: 'row'}}, [
                     this.fields.map(field => {
-                        return h('td', [field[this.valueField]]);
+                        return h('th', {attrs: {role: 'columnheader', scope: 'col'}}, [
+                            h('div', [field[this.valueField]]),
+                        ]);
                     }),
                 ]),
             ]
@@ -53,27 +60,31 @@ var index = {
                 if (field['formatter']) {
                     return h('td', [field['formatter'](item[field.key], field.key, item)]);
                 }
-                return h('td', [item[field['key']]]);
+                if (item[field.key]) {
+                    return h('td', [item[field.key]]);
+                }
+                return h('td', [
+                    h('slot', {attrs: {name: 'actions'}}, [h('div', this.$scopedSlots['cell(actions)']())]),
+                ]);
             });
-            const slots = h('div', {attrs: {name: 'actions'}, props: {slot: this.$slots.default}}, 'hallo!');
             return h(
                 'tr',
                 {
-                    attrs: {
-                        role: 'row',
-                    },
+                    attrs: {role: 'row'},
                     on: {click: () => this.clickRow(rowNumber)},
                 },
-                [[cells, slots]]
+                [cells]
             );
         });
-        const tableBody = h('tbody', [tableRows]);
+        const tableBody = h('tbody', {attrs: {role: 'rowgroup'}}, [tableRows]);
+
         const minimalTable = h(
             'table',
             {attrs: {class: 'table b-table table-hover table-borderless b-table-selectable b-table-select-single'}},
             [[tableheader], [tableBody]]
         );
-        return h('div', [minimalTable]);
+
+        return h('div', {attrs: {class: 'table-responsive', role: 'table'}}, [minimalTable]);
     },
 };
 
