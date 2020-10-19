@@ -54,19 +54,23 @@ var index = {
                 ]),
             ]
         );
-
         const tableRows = this.items.map((item, rowNumber) => {
-            let cells = this.fields.map(field => {
+            const cells = this.fields.map(field => {
+                let cellContent = '';
                 if (field['formatter']) {
-                    return h('td', [field['formatter'](item[field.key], field.key, item)]);
+                    cellContent = h('td', [field['formatter'](item[field.key], field.key, item)]);
                 }
                 if (item[field.key]) {
-                    return h('td', [item[field.key]]);
+                    cellContent = h('td', [item[field.key]]);
                 }
-                return h('td', [
-                    h('slot', {attrs: {name: 'actions'}}, [h('div', this.$scopedSlots['cell(actions)']())]),
-                ]);
+                if (this.$scopedSlots[`cell(${field.key})`]) {
+                    cellContent = h('td', {on: {click: () => this.$emit()}}, [
+                        h('slot', [h('div', this.$scopedSlots[`cell(${field.key})`](item))]),
+                    ]);
+                }
+                return cellContent;
             });
+
             return h(
                 'tr',
                 {
@@ -76,6 +80,7 @@ var index = {
                 [cells]
             );
         });
+
         const tableBody = h('tbody', {attrs: {role: 'rowgroup'}}, [tableRows]);
 
         const minimalTable = h(
@@ -83,7 +88,6 @@ var index = {
             {attrs: {class: 'table b-table table-hover table-borderless b-table-selectable b-table-select-single'}},
             [[tableheader], [tableBody]]
         );
-
         return h('div', {attrs: {class: 'table-responsive', role: 'table'}}, [minimalTable]);
     },
 };
