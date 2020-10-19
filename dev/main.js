@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import minimalTable from '../dist/index';
+import minimalTable from '../dist/index.esm';
 import BootstrapVue from 'bootstrap-vue';
 Vue.use(BootstrapVue);
 
