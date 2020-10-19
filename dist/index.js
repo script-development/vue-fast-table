@@ -15,26 +15,16 @@ var index = {
             type: Array,
             required: true,
         },
-        valueField: {
-            type: String,
-            required: false,
-            default: () => 'label',
-        },
-        perPage: {
-            type: Number,
-            required: false,
-            default: () => 20,
-        },
-        itemKey: {
-            type: String,
-            required: false,
-            default: () => 'name',
-        },
     },
     methods: {
         clickRow(row) {
             this.$emit('row-clicked', this.items[row]);
         },
+    },
+    data() {
+        return {
+            functionOverride: false,
+        };
     },
     render(h) {
         const tableheader = h(
@@ -47,9 +37,7 @@ var index = {
             [
                 h('tr', {attrs: {role: 'row'}}, [
                     this.fields.map(field => {
-                        return h('th', {attrs: {role: 'columnheader', scope: 'col'}}, [
-                            h('div', [field[this.valueField]]),
-                        ]);
+                        return h('th', {attrs: {role: 'columnheader', scope: 'col'}}, [h('div', [field.label])]);
                     }),
                 ]),
             ]
@@ -61,14 +49,16 @@ var index = {
                     return h('td', {attrs: {class: field['tdClass'](item[field.key], field.key, item)}, role: 'cell'});
                 }
                 if (field['formatter']) {
-                    return h('td', [field['formatter'](item[field.key], field.key, item)]);
+                    return h('td', {on: {click: () => this.clickRow(rowNumber)}}, [
+                        field['formatter'](item[field.key], field.key, item),
+                    ]);
                 }
                 if (this.$scopedSlots[`cell(${field.key})`]) {
                     return h('td', [h('slot', [h('div', this.$scopedSlots[`cell(${field.key})`](item))])]);
                 }
-                return h('td', {attrs: {role: 'cell'}}, item[field.key]);
+                return h('td', {on: {click: () => this.clickRow(rowNumber)}, attrs: {role: 'cell'}}, item[field.key]);
             });
-            return h('tr', {on: {click: () => this.clickRow(rowNumber)}}, [cells]);
+            return h('tr', [cells]);
         });
 
         const tableBody = h('tbody', {attrs: {role: 'rowgroup'}}, [tableRows]);
