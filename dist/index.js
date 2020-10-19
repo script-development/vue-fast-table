@@ -54,31 +54,21 @@ var index = {
                 ]),
             ]
         );
+
         const tableRows = this.items.map((item, rowNumber) => {
             const cells = this.fields.map(field => {
-                let cellContent = '';
-                if (field['formatter']) {
-                    cellContent = h('td', [field['formatter'](item[field.key], field.key, item)]);
+                if (field['tdClass']) {
+                    return h('td', {attrs: {class: field['tdClass'](item[field.key], field.key, item)}, role: 'cell'});
                 }
-                if (item[field.key]) {
-                    cellContent = h('td', [item[field.key]]);
+                if (field['formatter']) {
+                    return h('td', [field['formatter'](item[field.key], field.key, item)]);
                 }
                 if (this.$scopedSlots[`cell(${field.key})`]) {
-                    cellContent = h('td', {on: {click: () => this.$emit()}}, [
-                        h('slot', [h('div', this.$scopedSlots[`cell(${field.key})`](item))]),
-                    ]);
+                    return h('td', [h('slot', [h('div', this.$scopedSlots[`cell(${field.key})`](item))])]);
                 }
-                return cellContent;
+                return h('td', {attrs: {role: 'cell'}}, item[field.key]);
             });
-
-            return h(
-                'tr',
-                {
-                    attrs: {role: 'row'},
-                    on: {click: () => this.clickRow(rowNumber)},
-                },
-                [cells]
-            );
+            return h('tr', {on: {click: () => this.clickRow(rowNumber)}}, [cells]);
         });
 
         const tableBody = h('tbody', {attrs: {role: 'rowgroup'}}, [tableRows]);
@@ -88,6 +78,7 @@ var index = {
             {attrs: {class: 'table b-table table-hover table-borderless b-table-selectable b-table-select-single'}},
             [[tableheader], [tableBody]]
         );
+
         return h('div', {attrs: {class: 'table-responsive', role: 'table'}}, [minimalTable]);
     },
 };
