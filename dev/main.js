@@ -33,7 +33,7 @@ new Vue({
                     this.columns.push('actions');
                 }
             }
-            console.log(this.columns);
+
             for (let i = this.items.length; i < this.numberOfRows; i++) {
                 let item = {};
                 for (let column of this.columns) {
@@ -54,7 +54,7 @@ new Vue({
             }
         },
         addRow() {
-            this.numberOfRows++;
+            this.numberOfRows += 1000;
             this.createData();
         },
     },
@@ -62,9 +62,10 @@ new Vue({
         this.createData();
     },
     render(h) {
+        // TODO :: test with all possibilities
         const table = h(minimalTable, {props: {fields: this.columns, items: this.items}}, [h('template', 'hallo!')]);
         // const btable = h('b-table', {props: {columns: this.columns, items: this.items}});
-        const addButton = h('button', {on: {click: this.addRow}}, 'Voeg een rij toe');
+        const addButton = h('button', {on: {click: this.addRow}}, 'Voeg 1000 rijen toe');
         return h('div', [addButton, table]);
         // return h('div', [addButton, table, btable]);
     },

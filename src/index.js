@@ -4,27 +4,32 @@
 
 export default {
     name: 'minimal-table',
+    // functional: true, // TODO :: make this work, and check if it's faster
     props: {
         items: {
             type: Array,
             required: true,
         },
+        // TODO :: define fields JSDoc style
         fields: {
             type: Array,
             required: true,
         },
     },
     methods: {
-        clickRow(row) {
-            this.$emit('row-clicked', this.items[row]);
+        clickRow(rowNumber) {
+            this.$emit('row-clicked', this.items[rowNumber]);
         },
     },
-    data() {
-        return {
-            functionOverride: false,
-        };
-    },
+    // data() {
+    //     return {
+    //         // TODO :: what does this do?
+    //         functionOverride: false,
+    //     };
+    // },
     render(h) {
+        // TODO :: are the roles necessary?
+        // check: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/Cell_Role#:~:text=The%20element%20with%20role%3D%22cell,with%20role%3D%22row%22%20.
         const tableheader = h(
             'thead',
             {
@@ -43,17 +48,20 @@ export default {
 
         const tableRows = this.items.map((item, rowNumber) => {
             const cells = this.fields.map(field => {
-                if (field['tdClass']) {
-                    return h('td', {attrs: {class: field['tdClass'](item[field.key], field.key, item)}, role: 'cell'});
+                if (field.tdClass) {
+                    return h('td', {attrs: {class: field.tdClass(item[field.key], field.key, item)}, role: 'cell'});
                 }
-                if (field['formatter']) {
+
+                if (field.formatter) {
                     return h('td', {on: {click: () => this.clickRow(rowNumber)}}, [
-                        field['formatter'](item[field.key], field.key, item),
+                        field.formatter(item[field.key], field.key, item),
                     ]);
                 }
+
                 if (this.$scopedSlots[`cell(${field.key})`]) {
                     return h('td', [h('slot', [h('div', this.$scopedSlots[`cell(${field.key})`](item))])]);
                 }
+
                 return h('td', {on: {click: () => this.clickRow(rowNumber)}, attrs: {role: 'cell'}}, item[field.key]);
             });
             return h('tr', [cells]);
