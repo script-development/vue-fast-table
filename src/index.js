@@ -2,8 +2,9 @@
  * @typedef {import('vue').CreateElement} CreateElement
  */
 
-export default {
+var index = {
     name: 'minimal-table',
+    // functional: true,
     // functional: true, // TODO :: make this work, and check if it's faster
     props: {
         items: {
@@ -21,35 +22,23 @@ export default {
             this.$emit('row-clicked', this.items[rowNumber]);
         },
     },
-    // data() {
-    //     return {
-    //         // TODO :: what does this do?
-    //         functionOverride: false,
-    //     };
-    // },
+
     render(h) {
         // TODO :: are the roles necessary?
         // check: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/Cell_Role#:~:text=The%20element%20with%20role%3D%22cell,with%20role%3D%22row%22%20.
-        const tableheader = h(
-            'thead',
-            {
-                attrs: {
-                    role: 'rowgroup',
-                },
-            },
-            [
-                h('tr', {attrs: {role: 'row'}}, [
-                    this.fields.map(field => {
-                        return h('th', {attrs: {role: 'columnheader', scope: 'col'}}, [h('div', [field.label])]);
-                    }),
-                ]),
-            ]
-        );
+        const tableheader = h('thead', [
+            h('tr', [
+                this.fields.map(field => {
+                    console.log(field);
+                    return h('th', {attrs: {scope: 'col'}}, [h('div', [field.key])]);
+                }),
+            ]),
+        ]);
 
         const tableRows = this.items.map((item, rowNumber) => {
             const cells = this.fields.map(field => {
                 if (field.tdClass) {
-                    return h('td', {attrs: {class: field.tdClass(item[field.key], field.key, item)}, role: 'cell'});
+                    return h('td', {attrs: {class: field.tdClass(item[field.key], field.key, item)}});
                 }
 
                 if (field.formatter) {
@@ -62,7 +51,7 @@ export default {
                     return h('td', [h('slot', [h('div', this.$scopedSlots[`cell(${field.key})`](item))])]);
                 }
 
-                return h('td', {on: {click: () => this.clickRow(rowNumber)}, attrs: {role: 'cell'}}, item[field.key]);
+                return h('td', {on: {click: () => this.clickRow(rowNumber)}}, item[field.key]);
             });
             return h('tr', [cells]);
         });
@@ -75,6 +64,8 @@ export default {
             [[tableheader], [tableBody]]
         );
 
-        return h('div', {attrs: {class: 'table-responsive', role: 'table'}}, [minimalTable]);
+        return h('div', {attrs: {class: 'table-responsive'}}, [minimalTable]);
     },
 };
+
+module.exports = index;
