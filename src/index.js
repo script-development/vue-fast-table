@@ -6,20 +6,25 @@ export default {
     name: 'minimal-table',
     functional: true,
     props: {
+        /**
+         * @property {array} items - required
+         * An array of items that is used to build the table.
+         * An item may contain a formatter to dynamically render data
+         * An item may contain a td classname
+         */
         items: {
             type: Array,
             required: true,
         },
-        // TODO :: define fields JSDoc style
+
+        /**
+         * @property {array} fields - required
+         * An array of fields that are used to access item data
+         * and to build the table header.
+         */
         fields: {
             type: Array,
             required: true,
-        },
-    },
-    methods: {
-        clickRow(event) {
-            console.log(event);
-            // this.$emit('row-clicked', this.items[rowNumber]);
         },
     },
 
@@ -55,7 +60,7 @@ export default {
                     {
                         on: {
                             click: () => {
-                                listeners['row-clicked'](item);
+                                if (listeners['row-clicked']) listeners['row-clicked'](item);
                             },
                         },
                     },
