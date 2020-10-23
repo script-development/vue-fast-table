@@ -38,9 +38,6 @@ export default {
         let items = context.props.items;
         let fields = context.props.fields;
 
-        console.log(items);
-        console.log('fields:', fields);
-
         const tableheader = h('thead', [
             h('tr', [
                 fields.map(field => {
@@ -89,5 +86,3 @@ export default {
         return h('div', {attrs: {class: 'table-responsive'}}, [minimalTable]);
     },
 };
-
-// module.exports = index;
