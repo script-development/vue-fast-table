@@ -1,5 +1,15 @@
 /**
  * @typedef {import('vue').CreateElement} CreateElement
+ *
+ * @typedef {object} Field
+ * @property {Integer} id
+ * @property {String} key the string used to access an item's value
+ * @property {String} label the string visible in the table
+ *
+ * @typedef {object} Item
+ * @property {String} field.key the name of the key of the field the item belongs to
+ * @property {String} tdClass the classname that is used for the td the item is rendered in
+ * @func formatter a function to dynamically render table data
  */
 
 export default {
@@ -7,10 +17,7 @@ export default {
     functional: true,
     props: {
         /**
-         * @property {array} items - required
-         * An array of items that is used to build the table.
-         * An item may contain a formatter to dynamically render data
-         * An item may contain a td classname
+         * @type {Item[]} items - required
          */
         items: {
             type: Array,
@@ -18,9 +25,7 @@ export default {
         },
 
         /**
-         * @property {array} fields - required
-         * An array of fields that are used to access item data
-         * and to build the table header.
+         * @type {Field[]} fields - required
          */
         fields: {
             type: Array,
@@ -32,6 +37,9 @@ export default {
         const {listeners} = context;
         let items = context.props.items;
         let fields = context.props.fields;
+
+        console.log(items);
+        console.log('fields:', fields);
 
         const tableheader = h('thead', [
             h('tr', [
