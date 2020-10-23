@@ -1,6 +1,7 @@
 /**
  * @typedef {import('vue').CreateElement} CreateElement
  *
+ * @todo :: id is not used in a field, check in the code below what it actually can use
  * @typedef {object} Field
  * @property {Integer} id
  * @property {String} key the string used to access an item's value
@@ -33,17 +34,17 @@ export default {
         },
     },
 
-    render(h, context) {
-        const {listeners} = context;
-        let items = context.props.items;
-        let fields = context.props.fields;
+    render(h, {props, listeners, scopedSlots}) {
+        const items = props.items;
+        const fields = props.fields;
 
-        console.log(items);
-        console.log('fields:', fields);
+        // console.log(items);
+        // console.log('fields:', fields);
 
         const tableheader = h('thead', [
             h('tr', [
                 fields.map(field => {
+                    // TODO :: should show label when label is defined
                     return h('th', {attrs: {scope: 'col', class: 'header'}}, [h('div', [field.key])]);
                 }),
             ]),
@@ -60,8 +61,8 @@ export default {
                     ]);
                 }
 
-                if (context.scopedSlots[`cell(${field.key})`]) {
-                    return h('td', [h('slot', [h('div', context.scopedSlots[`cell(${field.key})`](item))])]);
+                if (scopedSlots[`cell(${field.key})`]) {
+                    return h('td', [h('slot', [h('div', scopedSlots[`cell(${field.key})`](item))])]);
                 }
                 return h(
                     'td',
