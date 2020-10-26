@@ -132,7 +132,7 @@ describe('Vue minimal table', () => {
                 assert.strictEqual(testResult, true);
             });
 
-            it('a formatter should also emit when a row is clicked', () => {
+            it('a row should also emit when a formatter is clicked', () => {
                 let testResult = false;
                 const wrapper = shallowMount(MinimalTable, {
                     propsData: {
@@ -149,6 +149,34 @@ describe('Vue minimal table', () => {
                 row.trigger('click');
 
                 assert.strictEqual(testResult, true);
+            });
+
+            it('should not emit when a row is clicked without a listener', () => {
+                let testResult = false;
+                const wrapper = shallowMount(MinimalTable, {
+                    propsData: {
+                        fields: [{key: 'name'}],
+                        items: [{name: 'hoi!'}],
+                    },
+                });
+                const row = wrapper.findAll('td');
+                row.trigger('click');
+
+                assert.strictEqual(testResult, false);
+            });
+
+            it('when no listener is defined, a row should not emit', () => {
+                let testResult = false;
+                const wrapper = shallowMount(MinimalTable, {
+                    propsData: {
+                        fields: [{key: 'name', formatter: () => 'harry'}],
+                        items: [{name: 'hoi!'}],
+                    },
+                });
+                const row = wrapper.find('td');
+                row.trigger('click');
+
+                assert.strictEqual(testResult, false);
             });
         });
     });
