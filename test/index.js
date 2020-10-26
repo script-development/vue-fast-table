@@ -145,7 +145,7 @@ describe('Vue minimal table', () => {
                         },
                     },
                 });
-                const row = wrapper.findAll('tr');
+                const row = wrapper.find('td');
                 row.trigger('click');
 
                 assert.strictEqual(testResult, true);
