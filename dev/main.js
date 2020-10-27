@@ -40,7 +40,7 @@ new Vue({
                         id: randomInteger,
                         key: 'formatter',
                         formatter: () => {
-                            return this.numberOfRows % 2 == 0 ? 'even' : 'oneven';
+                            return 'hoi!';
                         },
                     });
                 }
@@ -66,6 +66,9 @@ new Vue({
                 let item = {};
                 for (const field of this.fields) {
                     if (field.key == 'tdClass') {
+                        item[field.key] = '';
+                    }
+                    if (field.key == 'formatter') {
                         item[field.key] = '';
                     }
                     item[field.key] = generateRandomString(5);
