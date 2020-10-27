@@ -1,6 +1,7 @@
 /**
  * @typedef {import('vue').CreateElement} CreateElement
  *
+ * @todo :: these are not correct, missing stuff
  * @typedef {object} Field
  * @property {String} key the string used to access an item's value
  * @property {String} label the string visible in the table
@@ -11,6 +12,7 @@
  * @func formatter a function to dynamically render table data
  */
 
+//  TODO :: dependant on Bootstrap CSS, either add that or add custom css
 export default {
     name: 'minimal-table',
     functional: true,
