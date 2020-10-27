@@ -40,7 +40,7 @@ export default {
             h('tr', [
                 fields.map(field => {
                     let fieldContainsLabel = Object.prototype.hasOwnProperty.call(field, 'label');
-                    return h('th', {attrs: {scope: 'col', class: 'header'}}, [
+                    return h('th', {attrs: {class: 'header'}}, [
                         h('div', [fieldContainsLabel ? field.label : field.key]),
                     ]);
                 }),
