@@ -14,5 +14,5 @@
         "alwaysStrict": true,
         "esModuleInterop": true
     },
-    "include": ["src/index.js"]
+    "include": ["src/index.js", "types/**/*.d.ts"]
 }

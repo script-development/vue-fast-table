@@ -1,15 +1,7 @@
 /**
  * @typedef {import('vue').CreateElement} CreateElement
- *
- * @todo :: these are not correct, missing stuff
- * @typedef {object} Field
- * @property {String} key the string used to access an item's value
- * @property {String} label the string visible in the table
- *
- * @typedef {object} Item
- * @property {String} field.key the name of the key of the field the item belongs to
- * @property {String} tdClass the classname that is used for the td the item is rendered in
- * @func formatter a function to dynamically render table data
+ * @typedef {import('../types').Field} Field
+ * @typedef {import('../types').Item} Item
  */
 
 //  TODO :: dependant on Bootstrap CSS, either add that or add custom css
@@ -35,7 +27,10 @@ export default {
     },
 
     render(h, {props, listeners, scopedSlots}) {
+        /** @type {Item[]} */
         const items = props.items;
+
+        /**@type {Field[]} */
         const fields = props.fields;
 
         const tableheader = h('thead', [
