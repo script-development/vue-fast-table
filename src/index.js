@@ -6,7 +6,7 @@
 
 //  TODO :: dependant on Bootstrap CSS, either add that or add custom css
 export default {
-    name: 'minimal-table',
+    name: 'vueFastTable',
     functional: true,
     props: {
         /**
@@ -45,9 +45,8 @@ export default {
         ]);
         const tableRows = items.map(item => {
             const cells = fields.map(field => {
-                if (field.tdClass) {
-                    return h('td', {attrs: {class: field.tdClass(item[field.key], field.key, item)}});
-                }
+                // TODO :: improve on this
+                let className = field.tdClass ? field.tdClass(item[field.key], field.key, item) : '';
 
                 if (field.formatter) {
                     return h(
@@ -58,14 +57,20 @@ export default {
                                     if (listeners['row-clicked']) listeners['row-clicked'](item);
                                 },
                             },
+                            attrs: {
+                                class: className,
+                            },
                         },
                         [field.formatter(item[field.key], field.key, item)]
                     );
                 }
 
                 if (scopedSlots[`cell(${field.key})`]) {
-                    return h('td', [h('slot', [h('div', scopedSlots[`cell(${field.key})`](item))])]);
+                    return h('td', {attrs: {class: className}}, [
+                        h('slot', [h('div', scopedSlots[`cell(${field.key})`](item))]),
+                    ]);
                 }
+
                 return h(
                     'td',
                     {
@@ -73,6 +78,9 @@ export default {
                             click: () => {
                                 if (listeners['row-clicked']) listeners['row-clicked'](item);
                             },
+                        },
+                        attrs: {
+                            class: className,
                         },
                     },
                     item[field.key]
