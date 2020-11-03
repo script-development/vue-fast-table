@@ -7,6 +7,7 @@
     "settings": {
         // JavaScript settings
         "eslint.enable": true,
+        "javascript.implicitProjectConfig.checkJs": true,
         // Coverage settings
         "coverage-gutters.coverageBaseDir": "coverage",
         "coverage-gutters.showGutterCoverage": true,

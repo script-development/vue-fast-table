@@ -24,9 +24,47 @@ var index = {
             type: Array,
             required: true,
         },
+        borderless: {
+            type: Boolean,
+            default: () => false,
+        },
+        outlined: {
+            type: Boolean,
+            default: () => false,
+        },
+        bordered: {
+            type: Boolean,
+            default: () => false,
+        },
+        striped: {
+            type: Boolean,
+            default: () => false,
+        },
+        dark: {
+            type: Boolean,
+            default: () => false,
+        },
+        small: {
+            type: Boolean,
+            default: () => false,
+        },
     },
 
     render(h, {props, listeners, scopedSlots}) {
+        let tableClassName = 'table b-table';
+        for (const [key, value] of Object.entries(props)) {
+            if (key == 'items' || key == 'fields') {
+                continue;
+            }
+            if (value) {
+                if (key == 'small') {
+                    tableClassName += ' ' + 'table-sm';
+                } else {
+                    tableClassName += ' ' + 'table-' + key;
+                }
+            }
+        }
+
         /** @type {Item[]} */
         const items = props.items;
 
@@ -70,7 +108,6 @@ var index = {
                         h('slot', [h('div', scopedSlots[`cell(${field.key})`](item))]),
                     ]);
                 }
-
                 return h(
                     'td',
                     {
@@ -90,12 +127,7 @@ var index = {
         });
 
         const tableBody = h('tbody', [tableRows]);
-
-        const minimalTable = h(
-            'table',
-            {attrs: {class: 'table b-table table-hover table-borderless b-table-selectable b-table-select-single'}},
-            [[tableheader], [tableBody]]
-        );
+        const minimalTable = h('table', {attrs: {class: tableClassName}}, [[tableheader], [tableBody]]);
 
         return h('div', {attrs: {class: 'table-responsive'}}, [minimalTable]);
     },
