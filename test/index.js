@@ -1,9 +1,23 @@
 import 'jsdom-global/register';
-import assert from 'assert';
+import assert, {strict, strictEqual} from 'assert';
 import MinimalTable from '../src';
 import {shallowMount} from '@vue/test-utils';
 
 describe('Vue minimal table', () => {
+    describe('table', () => {
+        it('should have a classname based on props', () => {
+            const wrapper = shallowMount(MinimalTable, {
+                propsData: {
+                    fields: [{key: 'name'}],
+                    items: [{name: 'hoi'}],
+                    borderless: true,
+                    small: true,
+                },
+            });
+            assert(wrapper.find('table').classes('table', 'b-table', 'table-borderless', 'table-sm'));
+        });
+    });
+
     describe('header', () => {
         it('should have a table header element', () => {
             const wrapper = shallowMount(MinimalTable, {
