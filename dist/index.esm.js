@@ -1,18 +1,12 @@
 /**
  * @typedef {import('vue').CreateElement} CreateElement
- *
- * @typedef {object} Field
- * @property {String} key the string used to access an item's value
- * @property {String} label the string visible in the table
- *
- * @typedef {object} Item
- * @property {String} field.key the name of the key of the field the item belongs to
- * @property {String} tdClass the classname that is used for the td the item is rendered in
- * @func formatter a function to dynamically render table data
+ * @typedef {import('../types').Field} Field
+ * @typedef {import('../types').Item} Item
  */
 
+//  TODO :: dependant on Bootstrap CSS, either add that or add custom css
 var index = {
-    name: 'minimal-table',
+    name: 'vueFastTable',
     functional: true,
     props: {
         /**
@@ -33,7 +27,10 @@ var index = {
     },
 
     render(h, {props, listeners, scopedSlots}) {
+        /** @type {Item[]} */
         const items = props.items;
+
+        /**@type {Field[]} */
         const fields = props.fields;
 
         const tableheader = h('thead', [
@@ -48,9 +45,8 @@ var index = {
         ]);
         const tableRows = items.map(item => {
             const cells = fields.map(field => {
-                if (field.tdClass) {
-                    return h('td', {attrs: {class: field.tdClass(item[field.key], field.key, item)}});
-                }
+                // TODO :: improve on this
+                let className = field.tdClass ? field.tdClass(item[field.key], field.key, item) : '';
 
                 if (field.formatter) {
                     return h(
@@ -61,14 +57,20 @@ var index = {
                                     if (listeners['row-clicked']) listeners['row-clicked'](item);
                                 },
                             },
+                            attrs: {
+                                class: className,
+                            },
                         },
                         [field.formatter(item[field.key], field.key, item)]
                     );
                 }
 
                 if (scopedSlots[`cell(${field.key})`]) {
-                    return h('td', [h('slot', [h('div', scopedSlots[`cell(${field.key})`](item))])]);
+                    return h('td', {attrs: {class: className}}, [
+                        h('slot', [h('div', scopedSlots[`cell(${field.key})`](item))]),
+                    ]);
                 }
+
                 return h(
                     'td',
                     {
@@ -76,6 +78,9 @@ var index = {
                             click: () => {
                                 if (listeners['row-clicked']) listeners['row-clicked'](item);
                             },
+                        },
+                        attrs: {
+                            class: className,
                         },
                     },
                     item[field.key]
