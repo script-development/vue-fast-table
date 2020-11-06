@@ -1,3 +1,5 @@
+import {h} from 'vue';
+
 /**
  * @typedef {import('vue').CreateElement} CreateElement
  * @typedef {import('../types').Field} Field
@@ -5,9 +7,9 @@
  */
 
 //  TODO :: dependant on Bootstrap CSS, either add that or add custom css
-export default {
+const VueFastTable = {
     name: 'vueFastTable',
-    functional: true,
+    // functional: true,
     props: {
         /**
          * @type {Item[]} items - required
@@ -50,13 +52,19 @@ export default {
         },
     },
 
-    render(h, {props, listeners, scopedSlots}) {
+    setup(props, context) {
+        return {props, context};
+    },
+
+    render() {
+        console.log(this.context);
         let tableClassName = 'table b-table';
-        for (const [key, value] of Object.entries(props)) {
+        for (const [key, value] of Object.entries(this.props)) {
             if (key == 'items' || key == 'fields') {
                 continue;
             }
             if (value) {
+                console.log(value);
                 if (key == 'small') {
                     tableClassName += ' ' + 'table-sm';
                 } else {
@@ -64,12 +72,10 @@ export default {
                 }
             }
         }
-
         /** @type {Item[]} */
-        const items = props.items;
-
+        const items = this.props.items;
         /**@type {Field[]} */
-        const fields = props.fields;
+        const fields = this.props.fields;
 
         const tableheader = h('thead', [
             h('tr', [
@@ -83,16 +89,14 @@ export default {
         ]);
         const tableRows = items.map(item => {
             const cells = fields.map(field => {
-                // TODO :: improve on this
                 let className = field.tdClass ? field.tdClass(item[field.key], field.key, item) : '';
-
                 if (field.formatter) {
                     return h(
                         'td',
                         {
                             on: {
                                 click: () => {
-                                    if (listeners['row-clicked']) listeners['row-clicked'](item);
+                                    if (this.attrs.listeners['row-clicked']) this.attrs.listeners['row-clicked'](item);
                                 },
                             },
                             attrs: {
@@ -102,7 +106,6 @@ export default {
                         [field.formatter(item[field.key], field.key, item)]
                     );
                 }
-
                 if (scopedSlots[`cell(${field.key})`]) {
                     return h('td', {attrs: {class: className}}, [
                         h('slot', [h('div', scopedSlots[`cell(${field.key})`](item))]),
@@ -113,7 +116,7 @@ export default {
                     {
                         on: {
                             click: () => {
-                                if (listeners['row-clicked']) listeners['row-clicked'](item);
+                                if (this.attrs.listeners['row-clicked']) this.attrs.listeners['row-clicked'](item);
                             },
                         },
                         attrs: {
@@ -125,10 +128,10 @@ export default {
             });
             return h('tr', [cells]);
         });
-
         const tableBody = h('tbody', [tableRows]);
         const minimalTable = h('table', {attrs: {class: tableClassName}}, [[tableheader], [tableBody]]);
-
         return h('div', {attrs: {class: 'table-responsive'}}, [minimalTable]);
     },
 };
+
+export default VueFastTable;

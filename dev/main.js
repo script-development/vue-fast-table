@@ -1,96 +1,78 @@
-import Vue from 'vue';
-import minimalTable from '../dist/index.esm';
-import BootstrapVue from 'bootstrap-vue';
-import '../dist/style.css';
-
-Vue.use(BootstrapVue);
+import {createApp, h, reactive} from 'vue';
+import fastTable from '../dist/index.esm.js';
 
 const dec2hex = dec => (dec < 10 ? '0' + String(dec) : dec.toString(16));
 const generateRandomString = len => Array.from(crypto.getRandomValues(new Uint8Array(len)), dec2hex).join('');
 const randomInteger = Math.floor(Math.random() * 10000);
 
-new Vue({
-    data: {
-        valueField: '',
-        numberOfRows: 10,
-        numberOfFields: 3,
-        formatter: '',
-        useFormatterFunction: true,
-        useConditionalFormatting: true,
-        useActions: true,
-        fields: [],
-        items: [],
-        column: {},
-        item: {},
-    },
-    methods: {
-        createData() {
-            if (this.fields.length < this.numberOfFields) {
-                for (let j = 0; j < this.numberOfFields; j++) {
+createApp({
+    setup() {
+        const state = reactive({
+            numberOfItems: 20,
+            numberOfFields: 3,
+            fields: [],
+            items: [],
+        });
+
+        const createData = () => {
+            // create fields
+            if (state.fields.length < state.numberOfFields) {
+                for (let j = 0; j < state.numberOfFields; j++) {
                     let field = {
                         id: j,
                         key: generateRandomString(5),
                         label: generateRandomString(5),
                     };
-                    this.fields.push(field);
+                    state.fields.push(field);
                 }
 
-                if (this.useFormatterFunction && !this.fields.includes('formatter')) {
-                    this.fields.push({
-                        id: randomInteger,
-                        key: 'formatter',
-                        formatter: () => {
-                            return 'hoi!';
-                        },
-                    });
-                }
+                // add a formatter
+                state.fields.push({
+                    id: randomInteger,
+                    key: 'formatter',
+                    formatter: () => {
+                        return 'hoi!';
+                    },
+                });
 
-                if (this.useConditionalFormatting && !this.fields.includes('tdClass')) {
-                    this.fields.push({
-                        id: randomInteger,
-                        key: 'tdClass',
-                        label: '',
-                        /* eslint-disable no-unused-vars */
-                        tdClass: (tdClass, key, item) => {
-                            if (Math.random() < 0.5) {
-                                return 'inclusive_test';
-                            }
-                            return 'exclusive_test';
-                        },
-                        /* eslint-enable no-unused-vars */
-                    });
-                }
+                // add a tdClass
+                state.fields.push({
+                    id: randomInteger,
+                    key: 'tdClass',
+                    label: '',
+                    /* eslint-disable no-unused-vars */
+                    tdClass: (tdClass, key, item) => {
+                        if (Math.random() < 0.5) {
+                            return 'inclusive_test';
+                        }
+                        return 'exclusive_test';
+                    },
+                    /* eslint-enable no-unused-vars */
+                });
             }
 
-            for (let i = 0; i < this.numberOfRows; i++) {
+            // create the items
+            for (let i = 0; i < state.numberOfItems; i++) {
                 let item = {};
-                for (const field of this.fields) {
+                for (const field of state.fields) {
                     if (field.key == 'tdClass') {
                         item[field.key] = '';
+                        continue;
                     }
                     if (field.key == 'formatter') {
                         item[field.key] = '';
+                        continue;
                     }
                     item[field.key] = generateRandomString(5);
                 }
-                this.items.push(item);
+                state.items.push(item);
             }
-        },
-        addRow() {
-            console.time('adding data');
-            this.numberOfRows += 1000;
-            this.createData();
-            console.timeEnd('adding data');
-        },
+        };
+
+        createData();
+        return {state, createData};
     },
-    mounted() {
-        this.createData();
+    render() {
+        return h(fastTable, {fields: this.state.fields, items: this.state.items});
     },
-    render(h) {
-        // TODO :: test with all possibilities
-        const table = h(minimalTable, {props: {fields: this.fields, items: this.items}});
-        const btable = h('b-table', {props: {fields: this.fields, items: this.items}});
-        const addButton = h('button', {on: {click: this.addRow}}, 'Voeg 1000 rijen toe');
-        return h('div', [addButton, table, btable]);
-    },
-}).$mount('#app');
+}).mount('#app');
