@@ -9,7 +9,7 @@ import {h} from 'vue';
 //  TODO :: dependant on Bootstrap CSS, either add that or add custom css
 const VueFastTable = {
     name: 'vueFastTable',
-    // functional: true,
+    functional: true,
     props: {
         /**
          * @type {Item[]} items - required
@@ -49,6 +49,11 @@ const VueFastTable = {
         small: {
             type: Boolean,
             default: () => false,
+        },
+    },
+    methods: {
+        compare(a, b) {
+            console.log(a, b);
         },
     },
 
