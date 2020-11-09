@@ -2398,7 +2398,7 @@ const VueFastTable = {
     methods: {
         compare(a, b) {
             console.log(a, b);
-        }
+        },
     },
 
     setup(props, context) {
