@@ -190,6 +190,7 @@ describe('Vue minimal table', () => {
                 const row = wrapper.find('td');
                 row.trigger('click');
 
+                assert.strictEqual(true, false);
                 assert.strictEqual(testResult, false);
             });
         });
