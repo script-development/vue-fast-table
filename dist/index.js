@@ -50,8 +50,12 @@ var index = {
             type: Boolean,
             default: () => false,
         },
+        sort: {
+            type: String,
+            default: 'ascending'
+        },
         sortBy: {
-            // type: String,
+            type: String,
             default: () => '',
         },
     },
@@ -59,7 +63,7 @@ var index = {
     render(h, {props, listeners, scopedSlots}) {
         let tableClassName = 'table b-table';
         for (const [key, value] of Object.entries(props)) {
-            if (key == 'items' || key == 'fields') {
+            if (key == 'items' || key == 'fields' || key == 'sortBy') {
                 continue;
             }
             if (value) {
@@ -88,6 +92,9 @@ var index = {
                     comparison = -1;
                 } else {
                     comparison = 0;
+                }
+                if (props.sort == 'descending') {
+                    comparison *= -1; 
                 }
                 return comparison;
             });
