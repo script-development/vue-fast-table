@@ -81,8 +81,8 @@ export default {
         // sort items when a sortBy prop was passed
         if (props.sortBy.length) {
             items.sort((a, b) => {
-                const item1 = a[props.sortBy];
-                const item2 = b[props.sortBy];
+                const item1 = a[props.sortBy].toUpperCase();
+                const item2 = b[props.sortBy].toUpperCase();
                 let comparison = 0;
                 if (item1 > item2) {
                     comparison = 1;
