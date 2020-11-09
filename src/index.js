@@ -63,6 +63,7 @@ const VueFastTable = {
 
     render() {
         console.log(this.context);
+        console.log('hoi!');
         let tableClassName = 'table b-table';
         for (const [key, value] of Object.entries(this.props)) {
             if (key == 'items' || key == 'fields') {
@@ -111,7 +112,7 @@ const VueFastTable = {
                         [field.formatter(item[field.key], field.key, item)]
                     );
                 }
-                if (scopedSlots[`cell(${field.key})`]) {
+                if (this.context.slots[`cell(${field.key})`]) {
                     return h('td', {attrs: {class: className}}, [
                         h('slot', [h('div', scopedSlots[`cell(${field.key})`](item))]),
                     ]);

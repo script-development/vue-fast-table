@@ -70,5 +70,8 @@
     },
     "dependencies": {
         "@vue/cli": "^4.5.8"
+    },
+    "resolutions": {
+        "eslint-loader": "2.1.2"
     }
 }

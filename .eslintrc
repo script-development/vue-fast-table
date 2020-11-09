@@ -23,7 +23,7 @@
         "es6": true
     },
     "overrides": [{
-        "files": "*.js",
-        "excludedFiles": "dist/*.js"
+        "files": ".js",
+        "excludedFiles": "./dist/*.js"
     }]
 }
