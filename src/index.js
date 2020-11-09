@@ -48,6 +48,10 @@ export default {
             type: Boolean,
             default: () => false,
         },
+        sortBy: {
+            // type: String,
+            default: () => '',
+        },
     },
 
     render(h, {props, listeners, scopedSlots}) {
@@ -64,12 +68,28 @@ export default {
                 }
             }
         }
-
         /** @type {Item[]} */
-        const items = props.items;
+        let items = [...props.items];
 
         /**@type {Field[]} */
-        const fields = props.fields;
+        let fields = [...props.fields];
+
+        // sort items when a sortBy prop was passed
+        if (props.sortBy.length) {
+            items.sort((a, b) => {
+                const item1 = a[props.sortBy];
+                const item2 = b[props.sortBy];
+                let comparison = 0;
+                if (item1 > item2) {
+                    comparison = 1;
+                } else if (item2 > item1) {
+                    comparison = -1;
+                } else {
+                    comparison = 0;
+                }
+                return comparison;
+            });
+        }
 
         const tableheader = h('thead', [
             h('tr', [
