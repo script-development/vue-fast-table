@@ -52,7 +52,7 @@ var index = {
         },
         sort: {
             type: String,
-            default: 'ascending'
+            default: 'ascending',
         },
         sortBy: {
             type: String,
@@ -94,7 +94,7 @@ var index = {
                     comparison = 0;
                 }
                 if (props.sort == 'descending') {
-                    comparison *= -1; 
+                    comparison *= -1;
                 }
                 return comparison;
             });
