@@ -22,6 +22,7 @@ new Vue({
         items: [],
         column: {},
         item: {},
+        sortBy: 'name',
     },
     methods: {
         createData() {
@@ -89,8 +90,9 @@ new Vue({
     },
     render(h) {
         // TODO :: test with all possibilities
-        const table = h(minimalTable, {props: {fields: this.fields, items: this.items, sortBy: this.sortBy}});
-        const btable = h('b-table', {props: {fields: this.fields, items: this.items}});
+        const table = h(minimalTable, {props: {fields: this.fields, items: this.items, sortBy: this.sortBy}}); // 161ms
+        const btable = h('b-table', {props: {fields: this.fields, items: this.items, sortBy: this.sortBy}}); // 2820ms
+
         const addButton = h('button', {on: {click: this.addRow}}, 'Voeg 1000 rijen toe');
         return h('div', [addButton, table, btable]);
     },

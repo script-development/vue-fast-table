@@ -26,27 +26,27 @@ export default {
         },
         borderless: {
             type: Boolean,
-            default: () => true,
+            default: true,
         },
         outlined: {
             type: Boolean,
-            default: () => false,
+            default: false,
         },
         bordered: {
             type: Boolean,
-            default: () => false,
+            default: false,
         },
         striped: {
             type: Boolean,
-            default: () => false,
+            default: false,
         },
         dark: {
             type: Boolean,
-            default: () => false,
+            default: false,
         },
         small: {
             type: Boolean,
-            default: () => false,
+            default: false,
         },
         sort: {
             type: String,
@@ -54,7 +54,7 @@ export default {
         },
         sortBy: {
             type: String,
-            default: () => '',
+            required: false,
         },
     },
 
@@ -81,7 +81,7 @@ export default {
         let fields = [...props.fields];
 
         // sort items when a sortBy prop was passed
-        if (props.sortBy.length) {
+        if (props.sortBy) {
             items.sort((a, b) => {
                 const item1 = a[props.sortBy].toUpperCase();
                 const item2 = b[props.sortBy].toUpperCase();

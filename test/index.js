@@ -14,7 +14,12 @@ describe('Vue minimal table', () => {
                     small: true,
                 },
             });
-            assert(wrapper.find('table').classes('table', 'b-table', 'table-borderless', 'table-sm'));
+            assert.deepStrictEqual(wrapper.find('table').classes(), [
+                'table',
+                'b-table',
+                'table-borderless',
+                'table-sm',
+            ]);
         });
     });
 
@@ -120,9 +125,6 @@ describe('Vue minimal table', () => {
                     scopedSlots: {
                         'cell(name)': `<test-tag>Hoi</test-tag>`,
                     },
-                    components: {
-                        'test-tag': 'test-tag',
-                    },
                 });
                 assert(wrapper.find('test-tag').exists());
             });
@@ -192,6 +194,7 @@ describe('Vue minimal table', () => {
 
                 assert.strictEqual(testResult, false);
             });
+
             it('should sort when a sortBy prop was passed', () => {
                 const wrapper = shallowMount(MinimalTable, {
                     propsData: {
@@ -200,14 +203,16 @@ describe('Vue minimal table', () => {
                         sortBy: 'name',
                     },
                 });
-                let tds = wrapper.findAll('td');
-                let tableNames = [];
+                const tds = wrapper.findAll('td');
+                const tableNames = [];
                 for (let i = 0; i < tds.length; i++) {
                     tableNames.push(tds.at(i).text());
                 }
                 const sortedNames = ['Adam', 'Harry', 'Xantippe'];
                 assert.deepStrictEqual(sortedNames, tableNames);
             });
+
+            // TODO :: not all sorting lines are covered
         });
     });
 });
