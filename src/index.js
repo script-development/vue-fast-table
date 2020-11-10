@@ -62,8 +62,6 @@ const VueFastTable = {
     },
 
     render() {
-        console.log(this.context);
-        console.log('hoi!');
         let tableClassName = 'table b-table';
         for (const [key, value] of Object.entries(this.props)) {
             if (key == 'items' || key == 'fields') {
