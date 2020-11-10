@@ -60,6 +60,7 @@ new Vue({
                         /* eslint-enable no-unused-vars */
                     });
                 }
+                this.fields.push({id: randomInteger, key: 'name', label: 'Harry'});
             }
 
             for (let i = 0; i < this.numberOfRows; i++) {
@@ -88,7 +89,7 @@ new Vue({
     },
     render(h) {
         // TODO :: test with all possibilities
-        const table = h(minimalTable, {props: {fields: this.fields, items: this.items}});
+        const table = h(minimalTable, {props: {fields: this.fields, items: this.items, sortBy: this.sortBy}});
         const btable = h('b-table', {props: {fields: this.fields, items: this.items}});
         const addButton = h('button', {on: {click: this.addRow}}, 'Voeg 1000 rijen toe');
         return h('div', [addButton, table, btable]);

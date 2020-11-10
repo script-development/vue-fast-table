@@ -192,6 +192,22 @@ describe('Vue minimal table', () => {
 
                 assert.strictEqual(testResult, false);
             });
+            it('should sort when a sortBy prop was passed', () => {
+                const wrapper = shallowMount(MinimalTable, {
+                    propsData: {
+                        fields: [{key: 'name'}],
+                        items: [{name: 'Xantippe'}, {name: 'Adam'}, {name: 'Harry'}],
+                        sortBy: 'name',
+                    },
+                });
+                let tds = wrapper.findAll('td');
+                let tableNames = [];
+                for (let i = 0; i < tds.length; i++) {
+                    tableNames.push(tds.at(i).text());
+                }
+                const sortedNames = ['Adam', 'Harry', 'Xantippe'];
+                assert.deepStrictEqual(sortedNames, tableNames);
+            });
         });
     });
 });

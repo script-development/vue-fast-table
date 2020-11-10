@@ -26,7 +26,7 @@ export default {
         },
         borderless: {
             type: Boolean,
-            default: () => false,
+            default: () => true,
         },
         outlined: {
             type: Boolean,
@@ -48,12 +48,22 @@ export default {
             type: Boolean,
             default: () => false,
         },
+        sort: {
+            type: String,
+            default: 'ascending',
+        },
+        sortBy: {
+            type: String,
+            default: () => '',
+        },
     },
 
     render(h, {props, listeners, scopedSlots}) {
         let tableClassName = 'table b-table';
+
         for (const [key, value] of Object.entries(props)) {
-            if (key == 'items' || key == 'fields') {
+            const keysToIgnore = ['items', 'fields', 'sort', 'sortBy'];
+            if (keysToIgnore.includes(key)) {
                 continue;
             }
             if (value) {
@@ -64,12 +74,31 @@ export default {
                 }
             }
         }
-
         /** @type {Item[]} */
-        const items = props.items;
+        let items = [...props.items];
 
         /**@type {Field[]} */
-        const fields = props.fields;
+        let fields = [...props.fields];
+
+        // sort items when a sortBy prop was passed
+        if (props.sortBy.length) {
+            items.sort((a, b) => {
+                const item1 = a[props.sortBy].toUpperCase();
+                const item2 = b[props.sortBy].toUpperCase();
+                let comparison = 0;
+                if (item1 > item2) {
+                    comparison = 1;
+                } else if (item2 > item1) {
+                    comparison = -1;
+                } else {
+                    comparison = 0;
+                }
+                if (props.sort == 'descending') {
+                    comparison *= -1;
+                }
+                return comparison;
+            });
+        }
 
         const tableheader = h('thead', [
             h('tr', [
