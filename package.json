@@ -18,7 +18,7 @@
         "pub": "npm publish",
         "docs": "typedoc",
         "lint": "eslint ./src",
-        "mutate": "stryker run",
+        "mutate": "stryker run"
     },
     "author": "Script",
     "license": "MIT",
@@ -47,7 +47,6 @@
         "jsdom-global": "^3.0.2",
         "mocha": "^8.1.3",
         "nyc": "^15.1.0",
-        "pre-commit": "^1.2.2",
         "prettier": "^2.1.1",
         "pretty-quick": "^3.0.0",
         "rollup": "^2.26.11",
