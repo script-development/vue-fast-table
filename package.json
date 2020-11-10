@@ -18,8 +18,12 @@
         "pub": "npm publish",
         "docs": "typedoc",
         "lint": "eslint ./src",
-        "mutate": "stryker run"
+        "mutate": "stryker run",
+        "hallo": "echo"
     },
+    "pre-commit": [
+        "hallo"
+    ],
     "author": "Script",
     "license": "MIT",
     "devDependencies": {
