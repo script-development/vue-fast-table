@@ -7,6 +7,7 @@ export default [
             file: 'dist/index.esm.js',
             format: 'esm',
         },
+        external: ['vue'],
         plugins: [nodeResolve()],
     },
     {
@@ -14,8 +15,8 @@ export default [
         output: {
             file: 'dist/index.js',
             format: 'cjs',
-            // name: "SerVue",
         },
+        external: ['vue'],
         plugins: [nodeResolve()],
     },
 ];
