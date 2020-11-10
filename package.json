@@ -19,11 +19,7 @@
         "docs": "typedoc",
         "lint": "eslint ./src",
         "mutate": "stryker run",
-        "hallo": "echo $HOME"
     },
-    "pre-commit": [
-        "hallo"
-    ],
     "author": "Script",
     "license": "MIT",
     "devDependencies": {
