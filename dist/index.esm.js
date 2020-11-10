@@ -26,7 +26,7 @@ var index = {
         },
         borderless: {
             type: Boolean,
-            default: () => false,
+            default: () => true,
         },
         outlined: {
             type: Boolean,
@@ -60,8 +60,10 @@ var index = {
 
     render(h, {props, listeners, scopedSlots}) {
         let tableClassName = 'table b-table';
+
         for (const [key, value] of Object.entries(props)) {
-            if (key == 'items' || key == 'fields' || key == 'sortBy') {
+            const keysToIgnore = ['items', 'fields', 'sort', 'sortBy'];
+            if (keysToIgnore.includes(key)) {
                 continue;
             }
             if (value) {
