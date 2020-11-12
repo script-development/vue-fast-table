@@ -1,90 +1,83 @@
-import {createApp, h, reactive} from 'vue';
+import {computed, createApp, h, ref} from 'vue';
 import fastTable from '../dist/index.esm.js';
 
 const dec2hex = dec => (dec < 10 ? '0' + String(dec) : dec.toString(16));
 const generateRandomString = len => Array.from(crypto.getRandomValues(new Uint8Array(len)), dec2hex).join('');
-const randomInteger = Math.floor(Math.random() * 10000);
+const numberOfFields = 3;
 
 createApp({
     setup() {
-        const state = reactive({
-            numberOfItems: 20,
-            numberOfFields: 3,
-            fields: [],
-            items: [],
+        const numberOfItems = ref(20);
+        const fields = [];
+
+        // create fields
+        for (let j = 0; j < numberOfFields; j++) {
+            fields.push({
+                key: generateRandomString(5),
+                label: generateRandomString(5),
+            });
+        }
+
+        // add a formatter
+        fields.push({
+            key: 'formatter',
+            formatter: () => {
+                return 'hoi!';
+            },
         });
 
-        const createData = () => {
-            // create fields
-            if (state.fields.length < state.numberOfFields) {
-                for (let j = 0; j < state.numberOfFields; j++) {
-                    let field = {
-                        id: j,
-                        key: generateRandomString(5),
-                        label: generateRandomString(5),
-                    };
-                    state.fields.push(field);
+        // add a tdClass
+        fields.push({
+            key: 'tdClass',
+            label: 'td class',
+            tdClass: () => {
+                if (Math.random() < 0.5) {
+                    return 'inclusive_test';
                 }
+                return 'exclusive_test';
+            },
+        });
 
-                // add a formatter
-                state.fields.push({
-                    id: randomInteger,
-                    key: 'formatter',
-                    formatter: () => {
-                        return 'hoi!';
-                    },
-                });
-
-                // add a tdClass
-                state.fields.push({
-                    id: randomInteger,
-                    key: 'tdClass',
-                    label: '',
-                    /* eslint-disable no-unused-vars */
-                    tdClass: (tdClass, key, item) => {
-                        if (Math.random() < 0.5) {
-                            return 'inclusive_test';
-                        }
-                        return 'exclusive_test';
-                    },
-                    /* eslint-enable no-unused-vars */
-                });
-            }
-
+        const items = computed(() => {
+            const items = [];
             // create the items
-            for (let i = 0; i < state.numberOfItems; i++) {
+            for (let i = 0; i < numberOfItems.value; i++) {
                 let item = {};
-                for (const field of state.fields) {
-                    if (field.key == 'tdClass') {
-                        item[field.key] = '';
-                        continue;
-                    }
-                    if (field.key == 'formatter') {
+                for (const field of fields) {
+                    if (field.key == 'tdClass' || field.key == 'formatter') {
                         item[field.key] = '';
                         continue;
                     }
                     item[field.key] = generateRandomString(5);
                 }
-                state.items.push(item);
+                items.push(item);
             }
-        };
+            return items;
+        });
 
-        createData();
-        return {state, createData};
+        const increment = () => (numberOfItems.value += 1000);
+        return {fields, items, increment};
     },
     render() {
-        return h(
-            fastTable,
-            {
-                fields: this.state.fields,
-                items: this.state.items,
-                onRowClicked: () => {
-                    console.log('hoi!');
+        return [
+            h(
+                'button',
+                {
+                    onClick: this.increment,
                 },
-            },
-            // slots: {
-            {[`cell(${this.state.fields[0].key})`]: 'hallo'}
-            // },
-        );
+                'Voeg 1000 rijen toe'
+            ),
+            h(
+                fastTable,
+                {
+                    fields: this.fields,
+                    items: this.items,
+                    onRowClicked: () => {
+                        console.log('hoi!');
+                    },
+                },
+                {[`cell(${this.fields[0].key})`]: 'hallo'}
+            ),
+        ];
     },
 }).mount('#app');

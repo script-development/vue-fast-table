@@ -1,12 +1,34 @@
 import { h } from 'vue';
 
 /**
- * @typedef {import('vue').CreateElement} CreateElement
  * @typedef {import('../types').Field} Field
  * @typedef {import('../types').Item} Item
+ * @typedef {import('vue').ComponentObjectPropsOptions} ComponentObjectPropsOptions
+ * @typedef {import('vue').Component} Component
  */
 
+/**
+ * Get the table classes based on the given props
+ * @param {ComponentObjectPropsOptions} props
+ */
+const getTableClasses = props => {
+    let tableClassName = 'table b-table';
+    for (const [key, value] of Object.entries(props)) {
+        if (key == 'items' || key == 'fields' || !value) {
+            continue;
+        }
+
+        if (key == 'small') {
+            tableClassName += ' ' + 'table-sm';
+        } else {
+            tableClassName += ' ' + 'table-' + key;
+        }
+    }
+    return tableClassName;
+};
+
 //  TODO :: dependant on Bootstrap CSS, either add that or add custom css
+/** @type {Component} */
 const VueFastTable = {
     name: 'vueFastTable',
     functional: true,
@@ -53,26 +75,16 @@ const VueFastTable = {
     },
 
     setup(props, context) {
-        const rowClicked = item => {
-            context.emit('row-clicked', item);
-        };
-        return {props, context, rowClicked};
+        console.log('setup');
+        const rowClicked = item => context.emit('row-clicked', item);
+
+        const tableClassName = getTableClasses(props);
+
+        return {props, context, rowClicked, tableClassName};
     },
 
     render() {
-        let tableClassName = 'table b-table';
-        for (const [key, value] of Object.entries(this.props)) {
-            if (key == 'items' || key == 'fields') {
-                continue;
-            }
-            if (value) {
-                if (key == 'small') {
-                    tableClassName += ' ' + 'table-sm';
-                } else {
-                    tableClassName += ' ' + 'table-' + key;
-                }
-            }
-        }
+        console.log('render');
         const header = h('thead', [
             h('tr', [
                 this.props.fields.map(field => {
@@ -91,9 +103,8 @@ const VueFastTable = {
                 if (field.formatter) {
                     return h('td', {class: className}, [field.formatter(item[field.key], field.key, item)]);
                 }
-                console.log(this.context.slots);
+
                 if (this.context.slots[`cell(${field.key})`]) {
-                    console.log('context slots!');
                     return h('td', {attrs: {class: className}}, [
                         h('slot', [h('div', this.context.slots[`cell(${field.key})`](item))]),
                     ]);
@@ -115,7 +126,7 @@ const VueFastTable = {
 
         const body = h('tbody', [rows]);
 
-        return h('table', {class: tableClassName}, [header, body]);
+        return h('table', {class: this.tableClassName}, [header, body]);
     },
 };
 
