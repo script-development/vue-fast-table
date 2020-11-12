@@ -73,6 +73,18 @@ createApp({
         return {state, createData};
     },
     render() {
-        return h(fastTable, {fields: this.state.fields, items: this.state.items});
+        return h(
+            fastTable,
+            {
+                fields: this.state.fields,
+                items: this.state.items,
+                onRowClicked: () => {
+                    console.log('hoi!');
+                },
+            },
+            // slots: {
+            {[`cell(${this.state.fields[0].key})`]: 'hallo'}
+            // },
+        );
     },
 }).mount('#app');

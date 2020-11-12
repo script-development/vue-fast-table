@@ -1,7 +1,9 @@
 .inclusive_test {
+    width: 20px; 
     background-color: green;
 }
 
 .exclusive_test {
+    width: 20px; 
     background-color: red; 
 }
