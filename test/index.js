@@ -2,12 +2,13 @@ import 'jsdom-global/register';
 import assert, {strict, strictEqual} from 'assert';
 import MinimalTable from '../src';
 import {shallowMount} from '@vue/test-utils';
+import {h} from 'vue';
 
 describe('Vue minimal table', () => {
     describe('table', () => {
         it('should have a classname based on props', () => {
             const wrapper = shallowMount(MinimalTable, {
-                propsData: {
+                props: {
                     fields: [{key: 'name'}],
                     items: [{name: 'hoi'}],
                     borderless: true,
@@ -21,7 +22,7 @@ describe('Vue minimal table', () => {
     describe('header', () => {
         it('should have a table header element', () => {
             const wrapper = shallowMount(MinimalTable, {
-                propsData: {
+                props: {
                     fields: [{key: 'name'}],
                     items: [{name: 'hoi'}],
                 },
@@ -33,7 +34,7 @@ describe('Vue minimal table', () => {
         describe('table header cells', () => {
             it('should show the field key in the header when there is no label given', () => {
                 const wrapper = shallowMount(MinimalTable, {
-                    propsData: {
+                    props: {
                         fields: [{key: 'name'}],
                         items: [{name: 'hoi'}],
                     },
@@ -44,7 +45,7 @@ describe('Vue minimal table', () => {
 
             it('should show the label in the header', () => {
                 const wrapper = shallowMount(MinimalTable, {
-                    propsData: {
+                    props: {
                         fields: [{key: 'name', label: 'Naam'}],
                         items: [{name: 'hoi'}],
                     },
@@ -55,7 +56,7 @@ describe('Vue minimal table', () => {
 
             it('should show the amount of headers as there are fields', () => {
                 const wrapper = shallowMount(MinimalTable, {
-                    propsData: {
+                    props: {
                         fields: [{key: 'name'}, {key: 'street'}, {key: 'city'}, {key: 'email'}],
                         items: [{name: 'hoi'}],
                     },
@@ -69,7 +70,7 @@ describe('Vue minimal table', () => {
     describe('body', () => {
         it('should have a table body element', () => {
             const wrapper = shallowMount(MinimalTable, {
-                propsData: {
+                props: {
                     fields: [{key: 'name'}],
                     items: [{name: 'hoi'}],
                 },
@@ -81,7 +82,7 @@ describe('Vue minimal table', () => {
         describe('table data cells', () => {
             it('should show the text of the item belonging to the field key', () => {
                 const wrapper = shallowMount(MinimalTable, {
-                    propsData: {
+                    props: {
                         fields: [{key: 'name'}],
                         items: [{name: 'hoi'}],
                     },
@@ -92,7 +93,7 @@ describe('Vue minimal table', () => {
 
             it('should show the formatted text of the item belonging to the field formatter', () => {
                 const wrapper = shallowMount(MinimalTable, {
-                    propsData: {
+                    props: {
                         fields: [{key: 'name', formatter: () => 'nope'}],
                         items: [{name: 'hoi'}],
                     },
@@ -103,7 +104,7 @@ describe('Vue minimal table', () => {
 
             it("should use a field's tdClass as its classname", () => {
                 const wrapper = shallowMount(MinimalTable, {
-                    propsData: {
+                    props: {
                         fields: [{key: 'name', tdClass: () => 'rood'}],
                         items: [{name: 'hoi'}],
                     },
@@ -113,67 +114,50 @@ describe('Vue minimal table', () => {
 
             it('should render scoped slots', () => {
                 const wrapper = shallowMount(MinimalTable, {
-                    propsData: {
+                    props: {
                         fields: [{key: 'name'}],
                         items: [{name: 'hoi'}],
                     },
-                    scopedSlots: {
-                        'cell(name)': `<test-tag>Hoi</test-tag>`,
-                    },
-                    components: {
-                        'test-tag': 'test-tag',
+                    slots: {
+                        'cell(name)': () => h('test-tag', 'asdfsadbuhsaudgb'),
                     },
                 });
                 assert(wrapper.find('test-tag').exists());
             });
 
             it('should emit when a row is clicked', () => {
-                let testResult = false;
                 const wrapper = shallowMount(MinimalTable, {
-                    propsData: {
+                    props: {
                         fields: [{key: 'name'}],
                         items: [{name: 'hoi!'}],
                     },
-                    listeners: {
-                        'row-clicked': () => {
-                            testResult = true;
-                        },
-                    },
                 });
-                const row = wrapper.findAll('td');
-                row.trigger('click');
-
-                assert.strictEqual(testResult, true);
+                const cell = wrapper.find('td');
+                cell.trigger('click');
+                assert(wrapper.emitted()['row-clicked']);
             });
 
             it('a row should also emit when a formatter is clicked', () => {
-                let testResult = false;
                 const wrapper = shallowMount(MinimalTable, {
-                    propsData: {
+                    props: {
                         fields: [{key: 'name', formatter: () => 'harry'}],
                         items: [{name: 'hoi!'}],
                     },
-                    listeners: {
-                        'row-clicked': () => {
-                            testResult = true;
-                        },
-                    },
                 });
-                const row = wrapper.find('td');
-                row.trigger('click');
-
-                assert.strictEqual(testResult, true);
+                const cell = wrapper.find('td');
+                cell.trigger('click');
+                assert(wrapper.emitted()['row-clicked']);
             });
 
             it('should not emit when a row is clicked without a listener', () => {
                 let testResult = false;
                 const wrapper = shallowMount(MinimalTable, {
-                    propsData: {
+                    props: {
                         fields: [{key: 'name'}],
                         items: [{name: 'hoi!'}],
                     },
                 });
-                const row = wrapper.findAll('td');
+                const row = wrapper.find('td');
                 row.trigger('click');
 
                 assert.strictEqual(testResult, false);
@@ -182,7 +166,7 @@ describe('Vue minimal table', () => {
             it('when no listener is defined, a row should not emit', () => {
                 let testResult = false;
                 const wrapper = shallowMount(MinimalTable, {
-                    propsData: {
+                    props: {
                         fields: [{key: 'name', formatter: () => 'harry'}],
                         items: [{name: 'hoi!'}],
                     },
@@ -190,7 +174,6 @@ describe('Vue minimal table', () => {
                 const row = wrapper.find('td');
                 row.trigger('click');
 
-                assert.strictEqual(true, false);
                 assert.strictEqual(testResult, false);
             });
         });

@@ -111,9 +111,6 @@ const VueFastTable = {
 
     render() {
         const header = buildTableHeader(this.fields);
-
-        console.log(this.$slots, this.fields);
-
         const rows = this.items.map(item => {
             const cells = this.fields.map(field => {
                 const slot = this.$slots[`cell(${field.key})`] || '';

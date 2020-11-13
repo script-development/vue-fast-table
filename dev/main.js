@@ -73,10 +73,10 @@ createApp({
                     fields: this.fields,
                     items: this.items,
                     onRowClicked: () => {
-                        console.log('hoi!');
+                        console.log('hoi pipeloi!');
                     },
                 },
-                {[`cell(${this.fields[0].key})`]: 'hallo'}
+                {[`cell(${this.fields[0].key})`]: () => 'hallo'}
             ),
         ];
     },
