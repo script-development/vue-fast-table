@@ -57,8 +57,7 @@ const buildTableData = (item, field, slot, emit) => {
 };
 
 //  TODO :: dependant on Bootstrap CSS, either add that or add custom css
-/** @type {Component} */
-const VueFastTable = {
+var index = vue.defineComponent({
     name: 'vueFastTable',
     functional: true,
     props: {
@@ -104,13 +103,10 @@ const VueFastTable = {
     },
 
     setup(props) {
-        const tableClassName = getTableClasses(props);
-
-        return {tableClassName};
+        return {tableClassName: getTableClasses(props)};
     },
 
     render() {
-        const header = buildTableHeader(this.fields);
         const rows = this.items.map(item => {
             const cells = this.fields.map(field => {
                 const slot = this.$slots[`cell(${field.key})`] || '';
@@ -119,10 +115,8 @@ const VueFastTable = {
             return buildTableRow(cells);
         });
 
-        const body = vue.h('tbody', [rows]);
-
-        return vue.h('table', {class: this.tableClassName}, [header, body]);
+        return vue.h('table', {class: this.tableClassName}, [buildTableHeader(this.fields), vue.h('tbody', [rows])]);
     },
-};
+});
 
-module.exports = VueFastTable;
+module.exports = index;
