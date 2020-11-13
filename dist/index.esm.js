@@ -27,6 +27,23 @@ const getTableClasses = props => {
     return tableClassName;
 };
 
+const buildRow = cells => {
+    return h('tr', [cells]);
+};
+
+const getCell = (item, field, slots, emit) => {
+    let className = field.tdClass ? field.tdClass(item[field.key], field.key, item) : '';
+    let cellContent = '';
+    if (field.formatter) {
+        cellContent = field.formatter(item[field.key], field.key, item);
+    } else if (slots.length) {
+        cellContent = [h('div', [`${slots}cell(${field.key})`](item))];
+    } else {
+        cellContent = item[field.key];
+    }
+    return h('td', {class: className, onclick: () => emit('row-clicked', item)}, cellContent);
+};
+
 //  TODO :: dependant on Bootstrap CSS, either add that or add custom css
 /** @type {Component} */
 const VueFastTable = {
@@ -75,16 +92,12 @@ const VueFastTable = {
     },
 
     setup(props, context) {
-        console.log('setup');
-        const rowClicked = item => context.emit('row-clicked', item);
-
         const tableClassName = getTableClasses(props);
 
-        return {props, context, rowClicked, tableClassName};
+        return {props, context, tableClassName, getCell};
     },
 
     render() {
-        console.log('render');
         const header = h('thead', [
             h('tr', [
                 this.props.fields.map(field => {
@@ -97,31 +110,11 @@ const VueFastTable = {
         ]);
 
         const rows = this.props.items.map(item => {
-            const cells = this.props.fields.map(field => {
-                let className = field.tdClass ? field.tdClass(item[field.key], field.key, item) : '';
-
-                if (field.formatter) {
-                    return h('td', {class: className}, [field.formatter(item[field.key], field.key, item)]);
-                }
-
-                if (this.context.slots[`cell(${field.key})`]) {
-                    return h('td', {attrs: {class: className}}, [
-                        h('slot', [h('div', this.context.slots[`cell(${field.key})`](item))]),
-                    ]);
-                }
-
-                return h(
-                    'td',
-                    {
-                        class: className,
-                        onclick: () => {
-                            this.rowClicked(item);
-                        },
-                    },
-                    item[field.key]
-                );
+            const cells = this.fields.map(field => {
+                let slots = this.context.slots[`cell(${field.key})`] ? this.context.slots[`cell(${field.key})`] : '';
+                return this.getCell(item, field, slots, this.context.emit);
             });
-            return h('tr', [cells]);
+            return buildRow(cells);
         });
 
         const body = h('tbody', [rows]);
