@@ -29,17 +29,27 @@ const getTableClasses = props => {
     return tableClassName;
 };
 
-const buildRow = cells => {
-    return vue.h('tr', [cells]);
+// TODO :: documentation for the following functions
+const buildTableRow = cells => vue.h('tr', [cells]);
+
+const buildTableHeader = fields => {
+    return vue.h('thead', [
+        buildTableRow(
+            fields.map(field => {
+                const fieldContainsLabel = Object.prototype.hasOwnProperty.call(field, 'label');
+                return vue.h('th', {class: 'header'}, [vue.h('div', [fieldContainsLabel ? field.label : field.key])]);
+            })
+        ),
+    ]);
 };
 
-const getCell = (item, field, slots, emit) => {
+const buildTableData = (item, field, slot, emit) => {
     let className = field.tdClass ? field.tdClass(item[field.key], field.key, item) : '';
     let cellContent = '';
     if (field.formatter) {
         cellContent = field.formatter(item[field.key], field.key, item);
-    } else if (slots.length) {
-        cellContent = [vue.h('div', [`${slots}cell(${field.key})`](item))];
+    } else if (slot) {
+        cellContent = [vue.h('div', slot(item))];
     } else {
         cellContent = item[field.key];
     }
@@ -93,30 +103,23 @@ const VueFastTable = {
         },
     },
 
-    setup(props, context) {
+    setup(props) {
         const tableClassName = getTableClasses(props);
 
-        return {props, context, tableClassName, getCell};
+        return {tableClassName};
     },
 
     render() {
-        const header = vue.h('thead', [
-            vue.h('tr', [
-                this.props.fields.map(field => {
-                    let fieldContainsLabel = Object.prototype.hasOwnProperty.call(field, 'label');
-                    return vue.h('th', {attrs: {class: 'header'}}, [
-                        vue.h('div', [fieldContainsLabel ? field.label : field.key]),
-                    ]);
-                }),
-            ]),
-        ]);
+        const header = buildTableHeader(this.fields);
 
-        const rows = this.props.items.map(item => {
+        console.log(this.$slots, this.fields);
+
+        const rows = this.items.map(item => {
             const cells = this.fields.map(field => {
-                let slots = this.context.slots[`cell(${field.key})`] ? this.context.slots[`cell(${field.key})`] : '';
-                return this.getCell(item, field, slots, this.context.emit);
+                const slot = this.$slots[`cell(${field.key})`] || '';
+                return buildTableData(item, field, slot, this.$emit);
             });
-            return buildRow(cells);
+            return buildTableRow(cells);
         });
 
         const body = vue.h('tbody', [rows]);

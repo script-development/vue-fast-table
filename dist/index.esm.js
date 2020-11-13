@@ -27,17 +27,27 @@ const getTableClasses = props => {
     return tableClassName;
 };
 
-const buildRow = cells => {
-    return h('tr', [cells]);
+// TODO :: documentation for the following functions
+const buildTableRow = cells => h('tr', [cells]);
+
+const buildTableHeader = fields => {
+    return h('thead', [
+        buildTableRow(
+            fields.map(field => {
+                const fieldContainsLabel = Object.prototype.hasOwnProperty.call(field, 'label');
+                return h('th', {class: 'header'}, [h('div', [fieldContainsLabel ? field.label : field.key])]);
+            })
+        ),
+    ]);
 };
 
-const getCell = (item, field, slots, emit) => {
+const buildTableData = (item, field, slot, emit) => {
     let className = field.tdClass ? field.tdClass(item[field.key], field.key, item) : '';
     let cellContent = '';
     if (field.formatter) {
         cellContent = field.formatter(item[field.key], field.key, item);
-    } else if (slots.length) {
-        cellContent = [h('div', [`${slots}cell(${field.key})`](item))];
+    } else if (slot) {
+        cellContent = [h('div', slot(item))];
     } else {
         cellContent = item[field.key];
     }
@@ -91,30 +101,23 @@ const VueFastTable = {
         },
     },
 
-    setup(props, context) {
+    setup(props) {
         const tableClassName = getTableClasses(props);
 
-        return {props, context, tableClassName, getCell};
+        return {tableClassName};
     },
 
     render() {
-        const header = h('thead', [
-            h('tr', [
-                this.props.fields.map(field => {
-                    let fieldContainsLabel = Object.prototype.hasOwnProperty.call(field, 'label');
-                    return h('th', {attrs: {class: 'header'}}, [
-                        h('div', [fieldContainsLabel ? field.label : field.key]),
-                    ]);
-                }),
-            ]),
-        ]);
+        const header = buildTableHeader(this.fields);
 
-        const rows = this.props.items.map(item => {
+        console.log(this.$slots, this.fields);
+
+        const rows = this.items.map(item => {
             const cells = this.fields.map(field => {
-                let slots = this.context.slots[`cell(${field.key})`] ? this.context.slots[`cell(${field.key})`] : '';
-                return this.getCell(item, field, slots, this.context.emit);
+                const slot = this.$slots[`cell(${field.key})`] || '';
+                return buildTableData(item, field, slot, this.$emit);
             });
-            return buildRow(cells);
+            return buildTableRow(cells);
         });
 
         const body = h('tbody', [rows]);
