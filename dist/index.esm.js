@@ -85,7 +85,7 @@ var index = {
             items.sort((a, b) => {
                 const field = fields.find(f => f.key === sortBy);
                 let item1, item2;
-                if (field.formatter) {
+                if (field && field.formatter) {
                     item1 = field.formatter(a[sortBy], sortBy, a);
                     item2 = field.formatter(b[sortBy], sortBy, b);
                 } else if (typeof a[sortBy] === 'string') {
