@@ -1,69 +1,47 @@
 import Vue from 'vue';
 import minimalTable from '../dist/index.esm';
-import BootstrapVue from 'bootstrap-vue';
+import {BTable} from 'bootstrap-vue';
 import '../dist/style.css';
-
-Vue.use(BootstrapVue);
 
 const dec2hex = dec => (dec < 10 ? '0' + String(dec) : dec.toString(16));
 const generateRandomString = len => Array.from(crypto.getRandomValues(new Uint8Array(len)), dec2hex).join('');
-const randomInteger = Math.floor(Math.random() * 10000);
 
 new Vue({
     data: {
-        valueField: '',
         numberOfRows: 10,
         numberOfFields: 3,
-        formatter: '',
-        useFormatterFunction: true,
-        useConditionalFormatting: true,
-        useActions: true,
         fields: [],
         items: [],
         column: {},
+        keys: ['name', 'formatter'],
         item: {},
         sortBy: 'name',
     },
     methods: {
-        createData() {
-            if (this.fields.length < this.numberOfFields) {
-                for (let j = 0; j < this.numberOfFields; j++) {
-                    let field = {
-                        id: j,
-                        key: generateRandomString(5),
-                        label: generateRandomString(5),
-                    };
-                    this.fields.push(field);
-                }
-
-                if (this.useFormatterFunction && !this.fields.includes('formatter')) {
-                    this.fields.push({
-                        id: randomInteger,
-                        key: 'formatter',
-                        formatter: () => {
-                            return 'hoi!';
-                        },
-                    });
-                }
-
-                if (this.useConditionalFormatting && !this.fields.includes('tdClass')) {
-                    this.fields.push({
-                        id: randomInteger,
-                        key: 'tdClass',
-                        label: '',
-                        /* eslint-disable no-unused-vars */
-                        tdClass: (tdClass, key, item) => {
-                            if (Math.random() < 0.5) {
-                                return 'inclusive_test';
-                            }
-                            return 'exclusive_test';
-                        },
-                        /* eslint-enable no-unused-vars */
-                    });
-                }
-                this.fields.push({id: randomInteger, key: 'name', label: 'Harry'});
+        createFields() {
+            for (let j = 0; j < this.numberOfFields; j++) {
+                const key = generateRandomString(5);
+                this.keys.push(key);
+                this.fields.push({
+                    key,
+                    label: generateRandomString(5),
+                });
             }
 
+            this.fields.push({
+                key: 'formatter',
+                formatter: (value, key, item) => value + item[key],
+            });
+
+            this.fields.push({
+                key: 'tdClass',
+                label: '',
+                tdClass: () => (Math.random() < 0.5 ? 'inclusive_test' : 'exclusive_test'),
+            });
+
+            this.fields.push({key: 'name', label: 'Harry'});
+        },
+        createData() {
             for (let i = 0; i < this.numberOfRows; i++) {
                 let item = {};
                 for (const field of this.fields) {
@@ -86,14 +64,25 @@ new Vue({
         },
     },
     mounted() {
+        this.createFields();
         this.createData();
     },
     render(h) {
         // TODO :: test with all possibilities
         const table = h(minimalTable, {props: {fields: this.fields, items: this.items, sortBy: this.sortBy}}); // 161ms
-        const btable = h('b-table', {props: {fields: this.fields, items: this.items, sortBy: this.sortBy}}); // 2820ms
+
+        const btable = h(BTable, {props: {fields: this.fields, items: this.items, sortBy: this.sortBy}}); // 2820ms
+
+        const selecta = h(
+            'select',
+            {
+                domProps: {value: this.sortBy},
+                on: {input: e => (this.sortBy = e.target.value)},
+            },
+            [this.keys.map(k => h('option', {attrs: {value: k}}, [k]))]
+        );
 
         const addButton = h('button', {on: {click: this.addRow}}, 'Voeg 1000 rijen toe');
-        return h('div', [addButton, table, btable]);
+        return h('div', [addButton, selecta, table, btable]);
     },
 }).$mount('#app');

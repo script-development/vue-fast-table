@@ -59,6 +59,8 @@ export default {
     },
 
     render(h, {props, listeners, scopedSlots}) {
+        const {fields, sortBy} = props;
+
         let tableClassName = 'table b-table';
 
         for (const [key, value] of Object.entries(props)) {
@@ -74,17 +76,26 @@ export default {
                 }
             }
         }
-        /** @type {Item[]} */
-        let items = [...props.items];
 
-        /**@type {Field[]} */
-        let fields = [...props.fields];
+        /** @type {Item[]} */
+        const items = [...props.items];
 
         // sort items when a sortBy prop was passed
-        if (props.sortBy) {
+        if (sortBy) {
             items.sort((a, b) => {
-                const item1 = a[props.sortBy].toUpperCase();
-                const item2 = b[props.sortBy].toUpperCase();
+                const field = fields.find(f => f.key === sortBy);
+                let item1, item2;
+                if (field.formatter) {
+                    item1 = field.formatter(a[sortBy], sortBy, a);
+                    item2 = field.formatter(b[sortBy], sortBy, b);
+                } else if (typeof a[sortBy] === 'string') {
+                    item1 = a[sortBy].toUpperCase();
+                    item2 = b[sortBy].toUpperCase();
+                } else {
+                    item1 = a[sortBy];
+                    item2 = b[sortBy];
+                }
+
                 let comparison = 0;
                 if (item1 > item2) {
                     comparison = 1;
