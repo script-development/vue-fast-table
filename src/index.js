@@ -28,6 +28,10 @@ export default {
             type: Boolean,
             default: true,
         },
+        hover: {
+            type: Boolean,
+            default: false,
+        },
         outlined: {
             type: Boolean,
             default: false,
