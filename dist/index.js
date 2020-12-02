@@ -87,7 +87,7 @@ var index = {
         const items = [...props.items];
 
         // sort items when a sortBy prop was passed
-        if (sortBy) {
+        if (sortBy && items.length > 1) {
             items.sort((a, b) => {
                 const field = fields.find(f => f.key === sortBy);
                 let item1, item2;
