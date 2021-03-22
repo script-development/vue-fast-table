@@ -122,15 +122,7 @@ export default {
         const tableheader = h('thead', {attrs: {role: 'rowgroup'}}, [
             h('tr', {attrs: {role: 'row'}}, [
                 fields.map(field => {
-                    let className = field.thClass
-                        ? typeof field.thClass == 'function'
-                            ? field.thClass(field.key)
-                            : field.thClass
-                        : '';
-
-                    if (Array.isArray(className)) {
-                        className = className.join(' ');
-                    }
+                    let className = parseClasses(field.thClass);
 
                     className = ('header ' + className).trim();
 
@@ -149,11 +141,7 @@ export default {
         const tableRows = items.map(item => {
             const cells = fields.map(field => {
                 // TODO :: improve on this
-                let className = field.tdClass
-                    ? typeof field.tdClass == 'function'
-                        ? field.tdClass(item[field.key], field.key, item)
-                        : field.tdClass
-                    : '';
+                let className = parseClasses(field.tdClass);
 
                 if (Array.isArray(className)) {
                     className = className.join(' ');
@@ -205,4 +193,14 @@ export default {
 
         return h('div', {attrs: {class: 'table-responsive'}}, [minimalTable]);
     },
+};
+
+const parseClasses = input => {
+    className = input ? (typeof input == 'function' ? input(item[field.key], field.key, item) : input) : '';
+
+    if (Array.isArray(className)) {
+        className = className.join(' ');
+    }
+
+    return className;
 };
