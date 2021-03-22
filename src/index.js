@@ -60,6 +60,10 @@ export default {
             type: String,
             required: false,
         },
+        id: {
+            type: String,
+            required: false,
+        },
     },
 
     render(h, {props, listeners, scopedSlots}) {
@@ -115,63 +119,89 @@ export default {
             });
         }
 
-        const tableheader = h('thead', [
-            h('tr', [
+        const tableheader = h('thead', {attrs: {role: 'rowgroup'}}, [
+            h('tr', {attrs: {role: 'row'}}, [
                 fields.map(field => {
+                    let className = field.thClass
+                        ? typeof field.thClass == 'function'
+                            ? field.thClass(field.key)
+                            : field.thClass
+                        : '';
+
+                    if (Array.isArray(className)) {
+                        className = className.join(' ');
+                    }
+
+                    className = ('header ' + className).trim();
+
+                    const args = {attrs: {class: className, role: 'columnheader'}};
+
+                    if (scopedSlots['head']) {
+                        return h('th', args, [scopedSlots['head'](field)]);
+                    }
+
                     let fieldContainsLabel = Object.prototype.hasOwnProperty.call(field, 'label');
-                    return h('th', {attrs: {class: 'header'}}, [
-                        h('div', [fieldContainsLabel ? field.label : field.key]),
-                    ]);
+                    return h('th', args, [h('div', [fieldContainsLabel ? field.label : field.key])]);
                 }),
             ]),
         ]);
+
         const tableRows = items.map(item => {
             const cells = fields.map(field => {
                 // TODO :: improve on this
-                let className = field.tdClass ? field.tdClass(item[field.key], field.key, item) : '';
+                let className = field.tdClass
+                    ? typeof field.tdClass == 'function'
+                        ? field.tdClass(item[field.key], field.key, item)
+                        : field.tdClass
+                    : '';
 
-                if (field.formatter) {
-                    return h(
-                        'td',
-                        {
-                            on: {
-                                click: () => {
-                                    if (listeners['row-clicked']) listeners['row-clicked'](item);
-                                },
-                            },
-                            attrs: {
-                                class: className,
-                            },
-                        },
-                        [field.formatter(item[field.key], field.key, item)]
-                    );
+                if (Array.isArray(className)) {
+                    className = className.join(' ');
                 }
 
-                if (scopedSlots[`cell(${field.key})`]) {
-                    return h('td', {attrs: {class: className}}, [
-                        h('slot', [h('div', scopedSlots[`cell(${field.key})`](item))]),
-                    ]);
-                }
-                return h(
-                    'td',
-                    {
-                        on: {
-                            click: () => {
-                                if (listeners['row-clicked']) listeners['row-clicked'](item);
-                            },
-                        },
-                        attrs: {
-                            class: className,
+                const args = {
+                    on: {
+                        click: () => {
+                            if (listeners['row-clicked']) listeners['row-clicked'](item);
                         },
                     },
-                    item[field.key]
-                );
+                    attrs: {
+                        role: 'cell',
+                        class: className,
+                    },
+                };
+
+                if (field.formatter) {
+                    return h('td', args, [field.formatter(item[field.key], field.key, item)]);
+                }
+
+                const scopedField = scopedSlots[`cell(${field.key})`] || scopedSlots[`cell()`] || scopedSlots[`cell`];
+                if (scopedField) {
+                    if (item instanceof Object) {
+                        item.__key = field.key;
+                        if (!item.key) {
+                            item.key = field.key;
+                        }
+                    }
+
+                    return h('td', args, [h('slot', [h('div', scopedField(item))])]);
+                }
+                return h('td', args, item[field.key]);
             });
-            return h('tr', [cells]);
+            return h('tr', {attrs: {role: 'row'}}, [cells]);
         });
 
-        const tableBody = h('tbody', [tableRows]);
-        const minimalTable = h('table', {attrs: {class: tableClassName}}, [[tableheader], [tableBody]]);
+        const tableBody = h('tbody', {attrs: {role: 'rowgroup'}}, [tableRows]);
+        const minimalTable = h(
+            'table',
+            {
+                attrs: {
+                    class: tableClassName,
+                    id: props.id,
+                },
+            },
+            [[tableheader], [tableBody]]
+        );
 
         return h('div', {attrs: {class: 'table-responsive'}}, [minimalTable]);
     },
