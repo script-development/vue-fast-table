@@ -1,21 +1,30 @@
-import {nodeResolve} from '@rollup/plugin-node-resolve';
+import vue from 'rollup-plugin-vue';
+import ts from 'rollup-plugin-typescript2';
+import pkg from '../package.json';
 
 export default [
     {
-        input: 'src/index.js',
-        output: {
-            file: 'dist/index.esm.js',
-            format: 'esm',
-        },
-        plugins: [nodeResolve()],
-    },
-    {
-        input: 'src/index.js',
-        output: {
-            file: 'dist/index.js',
-            format: 'cjs',
-            // name: "SerVue",
-        },
-        plugins: [nodeResolve()],
+        input: 'src/index.ts',
+        output: [
+            {
+                // SSR build.
+                file: pkg.main,
+                format: 'cjs',
+                exports: 'auto',
+            },
+            {
+                // ESM build to be used with webpack/rollup.
+                file: pkg.module,
+                format: 'esm',
+            },
+        ],
+        plugins: [
+            ts({
+                tsconfig: './tsconfig.json',
+                declarationDir: './dist',
+            }),
+            vue(),
+        ],
+        external: Object.keys(pkg.devDependencies || {}),
     },
 ];

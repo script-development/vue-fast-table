@@ -1,10 +1,14 @@
 {
-    "extends": "eslint:recommended",
+    "extends": [
+        "eslint:recommended",
+        "plugin:vue/recommended"
+    ],
     "parserOptions": {
         "ecmaVersion": 9,
-        "sourceType": "module"
+        "sourceType": "module",
+        "parser": "@typescript-eslint/parser"
     },
-    "plugins": ["standard"],
+    "plugins": [],
     "globals": {},
     "rules": {
         "indent": ["warn", 4, {"SwitchCase": 1}],
@@ -14,7 +18,8 @@
         "getter-return": "error",
         "no-console": "off",
         "no-prototype-builtins": "error",
-        "no-unused-vars": ["error", {"argsIgnorePattern": "_", "args": "after-used"}]
+        "no-unused-vars": ["error", {"argsIgnorePattern": "_", "args": "after-used"}],
+        "vue/html-indent": ["warn", 4]
     },
     "env": {
         "browser": true,
