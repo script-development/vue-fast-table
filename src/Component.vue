@@ -53,7 +53,7 @@
 
                 <tr
                     v-else-if="sortedItems.length == 0"
-                    class="b-table-busy-slot"
+                    class="b-table-empty-slot"
                     role="row"
                 >
                     <td
@@ -70,6 +70,7 @@
                     v-for="item of sortedItems"
                     v-else
                     :key="item.__id"
+                    class="b-table-data"
                     role="row"
                     @click="$emit('row-clicked', item)"
                 >

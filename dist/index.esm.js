@@ -286,7 +286,7 @@ var __vue_render__ = function() {
             : _vm.sortedItems.length == 0
             ? _c(
                 "tr",
-                { staticClass: "b-table-busy-slot", attrs: { role: "row" } },
+                { staticClass: "b-table-empty-slot", attrs: { role: "row" } },
                 [
                   _c(
                     "td",
@@ -301,6 +301,7 @@ var __vue_render__ = function() {
                   "tr",
                   {
                     key: item.__id,
+                    staticClass: "b-table-data",
                     attrs: { role: "row" },
                     on: {
                       click: function($event) {
