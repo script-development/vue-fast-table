@@ -31,7 +31,44 @@
 
             <tbody role="rowgroup">
                 <tr
+                    v-if="busy"
+                    class="b-table-busy-slot"
+                    role="row"
+                >
+                    <td
+                        :colspan="fields.length"
+                        role="cell"
+                    >
+                        <slot name="table-busy">
+                            <div class="text-center text-danger my-2">
+                                <span
+                                    aria-hidden="true"
+                                    class="align-middle spinner-border"
+                                />
+                                <strong>Loading...</strong>
+                            </div>
+                        </slot>
+                    </td>
+                </tr>
+
+                <tr
+                    v-else-if="sortedItems.length == 0"
+                    class="b-table-busy-slot"
+                    role="row"
+                >
+                    <td
+                        :colspan="fields.length"
+                        role="cell"
+                    >
+                        <slot
+                            name="table-empty"
+                        />
+                    </td>
+                </tr>
+
+                <tr
                     v-for="item of sortedItems"
+                    v-else
                     :key="item.__id"
                     role="row"
                     @click="$emit('row-clicked', item)"
@@ -43,15 +80,15 @@
                         :class="parseClasses(field.tdClass, item)"
                     >
                         <slot
-                            v-bind="{...item, __key: field.key}"
+                            v-bind="getItemBindingData(item, field)"
                             :name="`cell(${field.key})`"
                         >
                             <slot
-                                v-bind="{...item, __key: field.key}"
+                                v-bind="getItemBindingData(item, field)"
                                 name="cell()"
                             >
                                 <slot
-                                    v-bind="{...item, __key: field.key}"
+                                    v-bind="getItemBindingData(item, field)"
                                     name="cell"
                                 >
                                     {{ field.formatter
@@ -72,7 +109,7 @@
 import {PropType} from 'vue';
 import {Field, Item} from './types';
 
-const propToClassKeys = ['borderless', 'hover', 'outlined', 'bordered', 'striped', 'dark', 'small'];
+const propToClassKeys = ['borderless', 'hover', 'outlined', 'bordered', 'striped', 'dark', 'small', 'busy'];
 
 //  TODO :: dependant on Bootstrap CSS, either add that or add custom css
 export default {
@@ -80,11 +117,11 @@ export default {
     props: {
         items: {
             type: Array as PropType<Item[]>,
-            default: [],
+            default: () => [],
         },
         fields: {
             type: Array as PropType<Field[]>,
-            default: [],
+            default: () => [],
         },
         borderless: {
             type: Boolean,
@@ -125,6 +162,10 @@ export default {
         id: {
             type: String,
             default: undefined,
+        },
+        busy: {
+            type: Boolean,
+            default: false,
         },
     },
 
@@ -169,6 +210,9 @@ export default {
     },
 
     methods: {
+        getItemBindingData(item: Item, field: Field) {
+            return {...item, __key: field.key};
+        },
         sortItems() {
             const items = [...this.items];
 

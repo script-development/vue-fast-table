@@ -26,18 +26,20 @@ describe('Vue minimal table', () => {
                     bordered: true,
                     striped:true,
                     dark: true,
+                    busy: true,
                 },
             });
             assert.deepStrictEqual(wrapper.find('table').classes(), [
-                'table',
-                'b-table',
-                'table-borderless',
-                'table-hover',
+                "table",
+                "b-table",
+                "table-borderless",
+                "table-hover",
                 "table-outlined",
                 "table-bordered",
                 "table-striped",
                 "table-dark",
-                'table-sm',
+                "table-sm",
+                "table-busy"
             ]);
         });
 
@@ -215,6 +217,37 @@ describe('Vue minimal table', () => {
 
                 await wrapper.setProps({items: [{name: 'hoi'}]});
                 assert.deepStrictEqual(wrapper.findAll('td').wrappers.map(d => d.text()), ['hoi']);
+            });
+
+            it('should render loading if busy', () => {
+                const wrapper = shallowMount(Table, {
+                    propsData: {
+                        fields: [{key: 'name'}],
+                        busy: true,
+                    },
+                });
+
+                assert.strictEqual(wrapper.findAll('td').wrappers.length, 1);
+                assert.strictEqual(wrapper.find('td').text(), 'Loading...');
+            });
+
+            it('should render loading or items when busy it toggled', async() => {
+                const wrapper = shallowMount(Table, {
+                    propsData: {
+                        fields: [{key: 'name'}],
+                        items: [{name: 'foo'}, {name: 'bar'}, {name: 'baz'}],
+                        busy: false,
+                    },
+                });
+
+                assert.strictEqual(wrapper.findAll('td').wrappers.length, 3);
+
+                await wrapper.setProps({busy: true});
+                assert.strictEqual(wrapper.findAll('td').wrappers.length, 1);
+                assert.strictEqual(wrapper.find('td').text(), 'Loading...');
+
+                await wrapper.setProps({busy: false});
+                assert.strictEqual(wrapper.findAll('td').wrappers.length, 3);
             });
 
             it('should render lines in correct order when sort is provided', () => {

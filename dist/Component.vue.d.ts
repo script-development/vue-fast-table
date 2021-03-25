@@ -5,11 +5,11 @@ declare const _default: {
     props: {
         items: {
             type: PropType<Item[]>;
-            default: any[];
+            default: () => any[];
         };
         fields: {
             type: PropType<Field[]>;
-            default: any[];
+            default: () => any[];
         };
         borderless: {
             type: BooleanConstructor;
@@ -51,6 +51,10 @@ declare const _default: {
             type: StringConstructor;
             default: any;
         };
+        busy: {
+            type: BooleanConstructor;
+            default: boolean;
+        };
     };
     data(): {
         sortedItems: Item[];
@@ -66,6 +70,11 @@ declare const _default: {
     };
     beforeMount(): void;
     methods: {
+        getItemBindingData(item: Item, field: Field): {
+            __key: string;
+            __id?: string | number;
+            formatter?: (_item: Item) => any;
+        };
         sortItems(): void;
         parseClasses(input: string | string[] | ((_item?: Item) => string | string[]), item?: Item): string;
     };

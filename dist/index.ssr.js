@@ -1,16 +1,16 @@
 'use strict';
 
-const propToClassKeys = ['borderless', 'hover', 'outlined', 'bordered', 'striped', 'dark', 'small'];
+const propToClassKeys = ['borderless', 'hover', 'outlined', 'bordered', 'striped', 'dark', 'small', 'busy'];
 var script = {
     name: 'VueFastTable',
     props: {
         items: {
             type: Array,
-            default: [],
+            default: () => [],
         },
         fields: {
             type: Array,
-            default: [],
+            default: () => [],
         },
         borderless: {
             type: Boolean,
@@ -52,6 +52,10 @@ var script = {
             type: String,
             default: undefined,
         },
+        busy: {
+            type: Boolean,
+            default: false,
+        },
     },
     data() {
         return {
@@ -88,6 +92,9 @@ var script = {
         this.sortItems();
     },
     methods: {
+        getItemBindingData(item, field) {
+            return Object.assign(Object.assign({}, item), { __key: field.key });
+        },
         sortItems() {
             const items = [...this.items];
             if (this.sortBy && items.length > 1) {
@@ -264,70 +271,112 @@ var __vue_render__ = function() {
       _c(
         "tbody",
         { attrs: { role: "rowgroup" } },
-        _vm._l(_vm.sortedItems, function(item) {
-          return _c(
-            "tr",
-            {
-              key: item.__id,
-              attrs: { role: "row" },
-              on: {
-                click: function($event) {
-                  return _vm.$emit("row-clicked", item)
-                }
-              }
-            },
-            _vm._l(_vm.fields, function(field) {
-              return _c(
-                "td",
-                {
-                  key: field.key,
-                  class: _vm.parseClasses(field.tdClass, item),
-                  attrs: { role: "cell" }
-                },
+        [
+          _vm.busy
+            ? _c(
+                "tr",
+                { staticClass: "b-table-busy-slot", attrs: { role: "row" } },
                 [
-                  _vm._t(
-                    "cell(" + field.key + ")",
-                    [
-                      _vm._t(
-                        "cell()",
-                        [
-                          _vm._t(
-                            "cell",
-                            [
-                              _vm._v(
-                                "\n                                " +
-                                  _vm._s(
-                                    field.formatter
-                                      ? field.formatter(item)
-                                      : item[field.key]
-                                  ) +
-                                  "\n                            "
-                              )
-                            ],
-                            null,
-                            Object.assign({}, item, { __key: field.key })
-                          )
-                        ],
-                        null,
-                        Object.assign({}, item, { __key: field.key })
-                      )
-                    ],
-                    null,
-                    Object.assign({}, item, { __key: field.key })
+                  _c(
+                    "td",
+                    { attrs: { colspan: _vm.fields.length, role: "cell" } },
+                    [_vm._t("table-busy", [_vm._m(0)])],
+                    2
                   )
-                ],
-                2
+                ]
               )
-            }),
-            0
-          )
-        }),
-        0
+            : _vm.sortedItems.length == 0
+            ? _c(
+                "tr",
+                { staticClass: "b-table-busy-slot", attrs: { role: "row" } },
+                [
+                  _c(
+                    "td",
+                    { attrs: { colspan: _vm.fields.length, role: "cell" } },
+                    [_vm._t("table-empty")],
+                    2
+                  )
+                ]
+              )
+            : _vm._l(_vm.sortedItems, function(item) {
+                return _c(
+                  "tr",
+                  {
+                    key: item.__id,
+                    attrs: { role: "row" },
+                    on: {
+                      click: function($event) {
+                        return _vm.$emit("row-clicked", item)
+                      }
+                    }
+                  },
+                  _vm._l(_vm.fields, function(field) {
+                    return _c(
+                      "td",
+                      {
+                        key: field.key,
+                        class: _vm.parseClasses(field.tdClass, item),
+                        attrs: { role: "cell" }
+                      },
+                      [
+                        _vm._t(
+                          "cell(" + field.key + ")",
+                          [
+                            _vm._t(
+                              "cell()",
+                              [
+                                _vm._t(
+                                  "cell",
+                                  [
+                                    _vm._v(
+                                      "\n                                " +
+                                        _vm._s(
+                                          field.formatter
+                                            ? field.formatter(item)
+                                            : item[field.key]
+                                        ) +
+                                        "\n                            "
+                                    )
+                                  ],
+                                  null,
+                                  _vm.getItemBindingData(item, field)
+                                )
+                              ],
+                              null,
+                              _vm.getItemBindingData(item, field)
+                            )
+                          ],
+                          null,
+                          _vm.getItemBindingData(item, field)
+                        )
+                      ],
+                      2
+                    )
+                  }),
+                  0
+                )
+              })
+        ],
+        2
       )
     ])
   ])
 };
-var __vue_staticRenderFns__ = [];
+var __vue_staticRenderFns__ = [
+  function() {
+    var _vm = this;
+    var _h = _vm.$createElement;
+    var _c = _vm._self._c || _h;
+    return _c("div", { staticClass: "text-center text-danger my-2" }, [
+      _c("span", {
+        staticClass: "align-middle spinner-border",
+        attrs: { "aria-hidden": "true" }
+      }),
+      _vm._v(" "),
+      _c("strong", [_vm._v("Loading...")])
+    ])
+  }
+];
 __vue_render__._withStripped = true;
 
   /* style */
