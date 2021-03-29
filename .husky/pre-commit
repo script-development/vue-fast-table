@@ -1,0 +1,5 @@
+# npx lint-staged
+npx pretty-quick --staged --pattern \"**/*.js\"
+npx pretty-quick --staged --pattern \"**/*.json\"
+
+npx pretty-quick --staged --pattern \"**/*.vue\"

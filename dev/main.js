@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import minimalTable from '../dist/index.esm';
 import {BTable} from 'bootstrap-vue';
-import '../dist/style.css';
+import './style.css';
 
 const dec2hex = dec => (dec < 10 ? '0' + String(dec) : dec.toString(16));
 const generateRandomString = len => Array.from(crypto.getRandomValues(new Uint8Array(len)), dec2hex).join('');
@@ -17,6 +17,10 @@ new Vue({
         item: {},
         sortBy: 'name',
     },
+    mounted() {
+        this.createFields();
+        this.createData();
+    },
     methods: {
         createFields() {
             for (let j = 0; j < this.numberOfFields; j++) {
@@ -30,7 +34,12 @@ new Vue({
 
             this.fields.push({
                 key: 'formatter',
-                formatter: (value, key, item) => value + item[key],
+                formatter: (value, key, item) => {
+                    if (typeof value == 'object') {
+                        return value.formatter + value.formatter;
+                    }
+                    return value + item[key];
+                },
             });
 
             this.fields.push({
@@ -63,15 +72,15 @@ new Vue({
             console.timeEnd('adding data');
         },
     },
-    mounted() {
-        this.createFields();
-        this.createData();
-    },
     render(h) {
-        // TODO :: test with all possibilities
-        const table = h(minimalTable, {props: {fields: this.fields, items: this.items, sortBy: this.sortBy}}); // 161ms
+        const args = {props: {fields: this.fields, items: this.items, sortBy: this.sortBy}};
 
-        const btable = h(BTable, {props: {fields: this.fields, items: this.items, sortBy: this.sortBy}}); // 2820ms
+        // TODO :: test with all possibilities
+        const tableTitle = h('h3', {}, ['vue fast table']);
+        const table = h(minimalTable, args); // 161ms
+
+        const btableTitle = h('h3', {}, ['bootstrap table']);
+        const btable = h(BTable, args); // 2820ms
 
         const selecta = h(
             'select',
@@ -83,6 +92,6 @@ new Vue({
         );
 
         const addButton = h('button', {on: {click: this.addRow}}, 'Voeg 1000 rijen toe');
-        return h('div', [addButton, selecta, table, btable]);
+        return h('div', [addButton, selecta, tableTitle, table, btableTitle, btable]);
     },
 }).$mount('#app');

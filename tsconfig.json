@@ -1,18 +1,16 @@
 {
     "compilerOptions": {
-        "target": "esnext",
+        "target": "ES6",
         "module": "esnext",
         "moduleResolution": "node",
-        "lib": ["es2017", "dom"],
-        "allowJs": true,
-        "checkJs": false,
-        "noEmit": false,
-        "declaration": true,
-        "emitDeclarationOnly": true,
         "strict": false,
-        "noImplicitThis": true,
         "alwaysStrict": true,
-        "esModuleInterop": true
+        "rootDir": "src",
+        "removeComments": true,
+        "declaration": true,
+        "experimentalDecorators": true,
+        "allowSyntheticDefaultImports": true,
     },
-    "include": ["src/index.js", "types/**/*.d.ts"]
+    "include": ["src/*"],
+    "exclude": ["node_modules"]
 }

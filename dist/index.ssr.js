@@ -1,3 +1,5 @@
+'use strict';
+
 const propToClassKeys = ['borderless', 'hover', 'outlined', 'bordered', 'striped', 'dark', 'small', 'busy'];
 var script = {
     name: 'VueFastTable',
@@ -407,4 +409,4 @@ __vue_render__._withStripped = true;
     undefined
   );
 
-export default __vue_component__;
+module.exports = __vue_component__;
