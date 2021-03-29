@@ -1,6 +1,6 @@
 {
     "name": "@script-development/vue-fast-table",
-    "version": "1.0.8",
+    "version": "2.0.0",
     "description": "Fast table for vue",
     "author": "Script",
     "scripts": {
