@@ -44,12 +44,12 @@ export default {
             const item = {...this.item};
             item.__key = this.field.key;
 
-            if (this.getContext) {
-                item.__context = this.getContext(item);
-            } else if (this.field?.getContext) {
+            if (this.field?.getContext) {
                 item.__context = this.field.getContext(item);
             } else if (item?.getContext) {
                 item.__context = item.getContext(item);
+            } else if (this.getContext) {
+                item.__context = this.getContext(item);
             }
 
             return item;
