@@ -14,16 +14,11 @@
                     >
                         <slot
                             v-bind="field"
-                            name="head"
+                            :name="headSlotName"
                         >
-                            <slot
-                                v-bind="field"
-                                name="head()"
-                            >
-                                <div>
-                                    {{ field.label || field.key }}
-                                </div>
-                            </slot>
+                            <div>
+                                {{ field.label || field.key }}
+                            </div>
                         </slot>
                     </th>
                 </tr>
@@ -74,32 +69,24 @@
                     role="row"
                     @click="$emit('row-clicked', item)"
                 >
-                    <td
+                    <Cell
                         v-for="field of fields"
                         :key="field.key"
-                        role="cell"
-                        :class="parseClasses(field.tdClass, item)"
+                        :item="item"
+                        :field="field"
+                        :get-context="getContext"
+                        @click="$emit('cell-click', $event)"
+                        @dblclick="$emit('cell-dblclick', $event)"
                     >
-                        <slot
-                            v-bind="getItemBindingData(item, field)"
-                            :name="`cell(${field.key})`"
-                        >
+                        <template #default="extendedItem">
                             <slot
-                                v-bind="getItemBindingData(item, field)"
-                                name="cell()"
+                                v-bind="extendedItem"
+                                :name="getSlotName(extendedItem)"
                             >
-                                <slot
-                                    v-bind="getItemBindingData(item, field)"
-                                    name="cell"
-                                >
-                                    {{ field.formatter
-                                        ? field.formatter(item)
-                                        : item[field.key]
-                                    }}
-                                </slot>
+                                {{ item[field.key] || '' }}
                             </slot>
-                        </slot>
-                    </td>
+                        </template>
+                    </Cell>
                 </tr>
             </tbody>
         </table>
@@ -109,12 +96,14 @@
 <script lang="ts">
 import {PropType} from 'vue';
 import {Field, Item} from './types';
+import Cell from './Cell.vue';
 
 const propToClassKeys = ['borderless', 'hover', 'outlined', 'bordered', 'striped', 'dark', 'small', 'busy'];
 
 //  TODO :: dependant on Bootstrap CSS, either add that or add custom css
 export default {
     name: 'VueFastTable',
+    components: {Cell},
     props: {
         items: {
             type: Array as PropType<Item[]>,
@@ -168,6 +157,12 @@ export default {
             type: Boolean,
             default: false,
         },
+        // provide a item with a context (ONLY ALPHABETIC CHARACTERS AND _)
+        // The __key will contain the field key
+        getContext: {
+            type: Function as PropType<(_item: Item) => string>,
+            default: undefined,
+        },
     },
 
     data() {
@@ -189,17 +184,24 @@ export default {
 
             return tableClassName;
         },
+        headSlotName() {
+            return this.$scopedSlots['head()'] ? 'head()' : 'head';
+        },
     },
 
     watch: {
         items() {
             this.sortItems();
         },
-        sortBy() {
-            this.sortItems();
+        sortBy(newVal, oldVal) {
+            if (newVal != oldVal) {
+                this.sortItems();
+            }
         },
-        sort() {
-            this.sortItems();
+        sort(newVal, oldVal) {
+            if (newVal != oldVal) {
+                this.sortItems();
+            }
         },
         fields() {
             this.sortItems();
@@ -211,8 +213,35 @@ export default {
     },
 
     methods: {
-        getItemBindingData(item: Item, field: Field) {
-            return {...item, __key: field.key};
+        getSlotName(item: Item) {
+            let name;
+
+            const context = item.__context;
+            if (context) {
+                name = `cell(${item.__key})@${context}`;
+                if (this.$scopedSlots[name]) {
+                    return name;
+                }
+            }
+
+            name = `cell(${item.__key})`;
+            if (this.$scopedSlots[name]) {
+                return name;
+            }
+
+            if (context) {
+                name = `cell()@${context}`;
+                if (this.$scopedSlots[name]) {
+                    return name;
+                }
+
+                name = `cell@${context}`;
+                if (this.$scopedSlots[name]) {
+                    return name;
+                }
+            }
+
+            return this.$scopedSlots[`cell()`] ? `cell()` : `cell`;
         },
         sortItems() {
             const items = [...this.items];
@@ -248,14 +277,14 @@ export default {
             }
             this.sortedItems = items.map<Item>((item, idx) => ({__id: idx, ...item}));
         },
-        parseClasses(input: ((_item?: Item) => string | string[]) | string | string[], item?: Item) {
-            let className = input ? (typeof input == 'function' ? input(item) : input) : '';
+        parseClasses(input: (() => string | string[]) | string | string[]) {
+            let className = input ? (typeof input == 'function' ? input() : input) : '';
 
             if (Array.isArray(className)) {
                 className = className.join(' ');
             }
 
-            return className;
+            return className.trim();
         },
     },
 };

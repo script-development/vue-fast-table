@@ -1,7 +1,11 @@
 import { PropType } from 'vue';
 import { Field, Item } from './types';
+import Cell from './Cell.vue';
 declare const _default: {
     name: string;
+    components: {
+        Cell: import("vue").VueConstructor<Cell>;
+    };
     props: {
         items: {
             type: PropType<Item[]>;
@@ -55,28 +59,29 @@ declare const _default: {
             type: BooleanConstructor;
             default: boolean;
         };
+        getContext: {
+            type: PropType<(_item: Item) => string>;
+            default: any;
+        };
     };
     data(): {
         sortedItems: Item[];
     };
     computed: {
         tableClassName(): string;
+        headSlotName(): "head()" | "head";
     };
     watch: {
         items(): void;
-        sortBy(): void;
-        sort(): void;
+        sortBy(newVal: any, oldVal: any): void;
+        sort(newVal: any, oldVal: any): void;
         fields(): void;
     };
     beforeMount(): void;
     methods: {
-        getItemBindingData(item: Item, field: Field): {
-            __key: string;
-            __id?: string | number;
-            formatter?: (_item: Item) => any;
-        };
+        getSlotName(item: Item): any;
         sortItems(): void;
-        parseClasses(input: string | string[] | ((_item?: Item) => string | string[]), item?: Item): string;
+        parseClasses(input: (() => string | string[]) | string | string[]): string;
     };
 };
 export default _default;

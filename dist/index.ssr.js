@@ -1,142 +1,53 @@
 'use strict';
 
-const propToClassKeys = ['borderless', 'hover', 'outlined', 'bordered', 'striped', 'dark', 'small', 'busy'];
-var script = {
-    name: 'VueFastTable',
+Object.defineProperty(exports, '__esModule', { value: true });
+
+var script$1 = {
+    name: 'Cell',
     props: {
-        items: {
-            type: Array,
-            default: () => [],
+        item: {
+            type: Object,
+            required: true,
         },
-        fields: {
-            type: Array,
-            default: () => [],
+        field: {
+            type: Object,
+            required: true,
         },
-        borderless: {
-            type: Boolean,
-            default: true,
-        },
-        hover: {
-            type: Boolean,
-            default: false,
-        },
-        outlined: {
-            type: Boolean,
-            default: false,
-        },
-        bordered: {
-            type: Boolean,
-            default: false,
-        },
-        striped: {
-            type: Boolean,
-            default: false,
-        },
-        dark: {
-            type: Boolean,
-            default: false,
-        },
-        small: {
-            type: Boolean,
-            default: false,
-        },
-        sort: {
-            type: String,
-            default: 'ascending',
-        },
-        sortBy: {
-            type: String,
+        getContext: {
+            type: Function,
             default: undefined,
         },
-        id: {
-            type: String,
-            default: undefined,
-        },
-        busy: {
-            type: Boolean,
-            default: false,
-        },
-    },
-    data() {
-        return {
-            sortedItems: [],
-        };
     },
     computed: {
-        tableClassName() {
-            let tableClassName = 'table b-table';
-            for (const key of propToClassKeys) {
-                const value = this[key];
-                if (value) {
-                    tableClassName += ' table-' + (key == 'small' ? 'sm' : key);
-                }
+        formatted() {
+            return this.field.formatter(this.extendedItem);
+        },
+        extendedItem() {
+            var _a;
+            const item = Object.assign({}, this.item);
+            item.__key = this.field.key;
+            if (this.getContext) {
+                item.__context = this.getContext(item);
             }
-            return tableClassName;
-        },
-    },
-    watch: {
-        items() {
-            this.sortItems();
-        },
-        sortBy() {
-            this.sortItems();
-        },
-        sort() {
-            this.sortItems();
-        },
-        fields() {
-            this.sortItems();
-        },
-    },
-    beforeMount() {
-        this.sortItems();
-    },
-    methods: {
-        getItemBindingData(item, field) {
-            return Object.assign(Object.assign({}, item), { __key: field.key });
-        },
-        sortItems() {
-            const items = [...this.items];
-            if (this.sortBy && items.length > 1) {
-                items.sort((a, b) => {
-                    const field = this.fields.find(f => f.key === this.sortBy);
-                    let item1, item2;
-                    if (field && field.formatter) {
-                        item1 = field.formatter(a[this.sortBy], this.sortBy, a);
-                        item2 = field.formatter(b[this.sortBy], this.sortBy, b);
-                    }
-                    else if (typeof a[this.sortBy] === 'string') {
-                        item1 = a[this.sortBy].toUpperCase();
-                        item2 = b[this.sortBy].toUpperCase();
-                    }
-                    else {
-                        item1 = a[this.sortBy];
-                        item2 = b[this.sortBy];
-                    }
-                    let comparison = 0;
-                    if (item1 > item2) {
-                        comparison = 1;
-                    }
-                    else if (item2 > item1) {
-                        comparison = -1;
-                    }
-                    else {
-                        comparison = 0;
-                    }
-                    if (this.sort == 'descending') {
-                        comparison *= -1;
-                    }
-                    return comparison;
-                });
+            else if ((_a = this.field) === null || _a === void 0 ? void 0 : _a.getContext) {
+                item.__context = this.field.getContext(item);
             }
-            this.sortedItems = items.map((item, idx) => (Object.assign({ __id: idx }, item)));
+            else if (item === null || item === void 0 ? void 0 : item.getContext) {
+                item.__context = item.getContext(item);
+            }
+            return item;
         },
-        parseClasses(input, item) {
-            let className = input ? (typeof input == 'function' ? input(item) : input) : '';
+        classes() {
+            const tdClass = this.field.tdClass;
+            const item = this.extendedItem;
+            let className = tdClass ? (typeof tdClass == 'function' ? tdClass(item) : tdClass) : '';
             if (Array.isArray(className)) {
                 className = className.join(' ');
             }
-            return className;
+            if (item.__context) {
+                className += ` context_${item.__context}`;
+            }
+            return className.trim();
         },
     },
 };
@@ -217,6 +128,243 @@ function normalizeComponent(template, style, script, scopeId, isFunctionalTempla
 }
 
 /* script */
+const __vue_script__$1 = script$1;
+
+/* template */
+var __vue_render__$1 = function() {
+  var _vm = this;
+  var _h = _vm.$createElement;
+  var _c = _vm._self._c || _h;
+  return _c(
+    "td",
+    {
+      class: _vm.classes,
+      attrs: { role: "cell" },
+      on: {
+        click: function($event) {
+          return _vm.$emit("click", _vm.extendedItem)
+        },
+        dblclick: function($event) {
+          return _vm.$emit("dblclick", _vm.extendedItem)
+        }
+      }
+    },
+    [
+      _vm.field.formatter
+        ? [_vm._v("\n        " + _vm._s(_vm.formatted) + "\n    ")]
+        : _vm._t("default", null, null, _vm.extendedItem)
+    ],
+    2
+  )
+};
+var __vue_staticRenderFns__$1 = [];
+__vue_render__$1._withStripped = true;
+
+  /* style */
+  const __vue_inject_styles__$1 = undefined;
+  /* scoped */
+  const __vue_scope_id__$1 = undefined;
+  /* module identifier */
+  const __vue_module_identifier__$1 = undefined;
+  /* functional template */
+  const __vue_is_functional_template__$1 = false;
+  /* style inject */
+  
+  /* style inject SSR */
+  
+  /* style inject shadow dom */
+  
+
+  
+  const __vue_component__$1 = /*#__PURE__*/normalizeComponent(
+    { render: __vue_render__$1, staticRenderFns: __vue_staticRenderFns__$1 },
+    __vue_inject_styles__$1,
+    __vue_script__$1,
+    __vue_scope_id__$1,
+    __vue_is_functional_template__$1,
+    __vue_module_identifier__$1,
+    false,
+    undefined,
+    undefined,
+    undefined
+  );
+
+const propToClassKeys = ['borderless', 'hover', 'outlined', 'bordered', 'striped', 'dark', 'small', 'busy'];
+var script = {
+    name: 'VueFastTable',
+    components: { Cell: __vue_component__$1 },
+    props: {
+        items: {
+            type: Array,
+            default: () => [],
+        },
+        fields: {
+            type: Array,
+            default: () => [],
+        },
+        borderless: {
+            type: Boolean,
+            default: true,
+        },
+        hover: {
+            type: Boolean,
+            default: false,
+        },
+        outlined: {
+            type: Boolean,
+            default: false,
+        },
+        bordered: {
+            type: Boolean,
+            default: false,
+        },
+        striped: {
+            type: Boolean,
+            default: false,
+        },
+        dark: {
+            type: Boolean,
+            default: false,
+        },
+        small: {
+            type: Boolean,
+            default: false,
+        },
+        sort: {
+            type: String,
+            default: 'ascending',
+        },
+        sortBy: {
+            type: String,
+            default: undefined,
+        },
+        id: {
+            type: String,
+            default: undefined,
+        },
+        busy: {
+            type: Boolean,
+            default: false,
+        },
+        getContext: {
+            type: Function,
+            default: undefined,
+        },
+    },
+    data() {
+        return {
+            sortedItems: [],
+        };
+    },
+    computed: {
+        tableClassName() {
+            let tableClassName = 'table b-table';
+            for (const key of propToClassKeys) {
+                const value = this[key];
+                if (value) {
+                    tableClassName += ' table-' + (key == 'small' ? 'sm' : key);
+                }
+            }
+            return tableClassName;
+        },
+        headSlotName() {
+            return this.$scopedSlots['head()'] ? 'head()' : 'head';
+        },
+    },
+    watch: {
+        items() {
+            this.sortItems();
+        },
+        sortBy(newVal, oldVal) {
+            if (newVal != oldVal) {
+                this.sortItems();
+            }
+        },
+        sort(newVal, oldVal) {
+            if (newVal != oldVal) {
+                this.sortItems();
+            }
+        },
+        fields() {
+            this.sortItems();
+        },
+    },
+    beforeMount() {
+        this.sortItems();
+    },
+    methods: {
+        getSlotName(item) {
+            let name;
+            const context = item.__context;
+            if (context) {
+                name = `cell(${item.__key})@${context}`;
+                if (this.$scopedSlots[name]) {
+                    return name;
+                }
+            }
+            name = `cell(${item.__key})`;
+            if (this.$scopedSlots[name]) {
+                return name;
+            }
+            if (context) {
+                name = `cell()@${context}`;
+                if (this.$scopedSlots[name]) {
+                    return name;
+                }
+                name = `cell@${context}`;
+                if (this.$scopedSlots[name]) {
+                    return name;
+                }
+            }
+            return this.$scopedSlots[`cell()`] ? `cell()` : `cell`;
+        },
+        sortItems() {
+            const items = [...this.items];
+            if (this.sortBy && items.length > 1) {
+                items.sort((a, b) => {
+                    const field = this.fields.find(f => f.key === this.sortBy);
+                    let item1, item2;
+                    if (field && field.formatter) {
+                        item1 = field.formatter(a[this.sortBy], this.sortBy, a);
+                        item2 = field.formatter(b[this.sortBy], this.sortBy, b);
+                    }
+                    else if (typeof a[this.sortBy] === 'string') {
+                        item1 = a[this.sortBy].toUpperCase();
+                        item2 = b[this.sortBy].toUpperCase();
+                    }
+                    else {
+                        item1 = a[this.sortBy];
+                        item2 = b[this.sortBy];
+                    }
+                    let comparison = 0;
+                    if (item1 > item2) {
+                        comparison = 1;
+                    }
+                    else if (item2 > item1) {
+                        comparison = -1;
+                    }
+                    else {
+                        comparison = 0;
+                    }
+                    if (this.sort == 'descending') {
+                        comparison *= -1;
+                    }
+                    return comparison;
+                });
+            }
+            this.sortedItems = items.map((item, idx) => (Object.assign({ __id: idx }, item)));
+        },
+        parseClasses(input) {
+            let className = input ? (typeof input == 'function' ? input() : input) : '';
+            if (Array.isArray(className)) {
+                className = className.join(' ');
+            }
+            return className.trim();
+        },
+    },
+};
+
+/* script */
 const __vue_script__ = script;
 
 /* template */
@@ -240,22 +388,15 @@ var __vue_render__ = function() {
               },
               [
                 _vm._t(
-                  "head",
+                  _vm.headSlotName,
                   [
-                    _vm._t(
-                      "head()",
-                      [
-                        _c("div", [
-                          _vm._v(
-                            "\n                                " +
-                              _vm._s(field.label || field.key) +
-                              "\n                            "
-                          )
-                        ])
-                      ],
-                      null,
-                      field
-                    )
+                    _c("div", [
+                      _vm._v(
+                        "\n                            " +
+                          _vm._s(field.label || field.key) +
+                          "\n                        "
+                      )
+                    ])
                   ],
                   null,
                   field
@@ -312,49 +453,49 @@ var __vue_render__ = function() {
                     }
                   },
                   _vm._l(_vm.fields, function(field) {
-                    return _c(
-                      "td",
-                      {
-                        key: field.key,
-                        class: _vm.parseClasses(field.tdClass, item),
-                        attrs: { role: "cell" }
+                    return _c("Cell", {
+                      key: field.key,
+                      attrs: {
+                        item: item,
+                        field: field,
+                        "get-context": _vm.getContext
                       },
-                      [
-                        _vm._t(
-                          "cell(" + field.key + ")",
-                          [
-                            _vm._t(
-                              "cell()",
-                              [
+                      on: {
+                        click: function($event) {
+                          return _vm.$emit("cell-click", $event)
+                        },
+                        dblclick: function($event) {
+                          return _vm.$emit("cell-dblclick", $event)
+                        }
+                      },
+                      scopedSlots: _vm._u(
+                        [
+                          {
+                            key: "default",
+                            fn: function(extendedItem) {
+                              return [
                                 _vm._t(
-                                  "cell",
+                                  _vm.getSlotName(extendedItem),
                                   [
                                     _vm._v(
-                                      "\n                                " +
-                                        _vm._s(
-                                          field.formatter
-                                            ? field.formatter(item)
-                                            : item[field.key]
-                                        ) +
-                                        "\n                            "
+                                      "\n                            " +
+                                        _vm._s(item[field.key] || "") +
+                                        "\n                        "
                                     )
                                   ],
                                   null,
-                                  _vm.getItemBindingData(item, field)
+                                  extendedItem
                                 )
-                              ],
-                              null,
-                              _vm.getItemBindingData(item, field)
-                            )
-                          ],
-                          null,
-                          _vm.getItemBindingData(item, field)
-                        )
-                      ],
-                      2
-                    )
+                              ]
+                            }
+                          }
+                        ],
+                        null,
+                        true
+                      )
+                    })
                   }),
-                  0
+                  1
                 )
               })
         ],
@@ -409,4 +550,9 @@ __vue_render__._withStripped = true;
     undefined
   );
 
-module.exports = __vue_component__;
+const VueFastTable = __vue_component__;
+const InternalCell = __vue_component__$1;
+
+exports.InternalCell = InternalCell;
+exports.VueFastTable = VueFastTable;
+exports.default = __vue_component__;
