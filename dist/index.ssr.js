@@ -1,3 +1,7 @@
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
 var script$1 = {
     name: 'Cell',
     props: {
@@ -549,5 +553,6 @@ __vue_render__._withStripped = true;
 const VueFastTable = __vue_component__;
 const InternalCell = __vue_component__$1;
 
-export default __vue_component__;
-export { InternalCell, VueFastTable };
+exports.InternalCell = InternalCell;
+exports.VueFastTable = VueFastTable;
+exports.default = __vue_component__;

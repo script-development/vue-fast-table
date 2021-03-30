@@ -1,31 +1,66 @@
-import 'jsdom-global/register';
-import assert, {strict, strictEqual} from 'assert';
-import MinimalTable from '../src';
-import {shallowMount} from '@vue/test-utils';
+require('jsdom-global')();
+const assert = require('assert');
+const {InternalCell, VueFastTable} = require('../dist/index.ssr');
+const {createLocalVue, shallowMount, mount} = require('@vue/test-utils');
+
+const Cell = InternalCell;
+const Table = VueFastTable;
 
 describe('Vue minimal table', () => {
     describe('table', () => {
-        it('should have a classname based on props', () => {
-            const wrapper = shallowMount(MinimalTable, {
-                propsData: {
-                    fields: [{key: 'name'}],
-                    items: [{name: 'hoi'}],
-                    borderless: true,
-                    small: true,
-                },
-            });
+        it('should have default set of classes when no class mutating args are provided', () => {
+            const wrapper = shallowMount(Table, {});
             assert.deepStrictEqual(wrapper.find('table').classes(), [
                 'table',
                 'b-table',
                 'table-borderless',
-                'table-sm',
             ]);
+        });
+
+        it('should have a classname based on props', () => {
+            const wrapper = shallowMount(Table, {
+                propsData: {
+                    fields: [{key: 'name'}],
+                    items: [{name: 'hoi'}],
+                    borderless: true,
+                    hover: true,
+                    small: true,
+                    outlined:true,
+                    bordered: true,
+                    striped:true,
+                    dark: true,
+                    busy: true,
+                },
+            });
+            assert.deepStrictEqual(wrapper.find('table').classes(), [
+                "table",
+                "b-table",
+                "table-borderless",
+                "table-hover",
+                "table-outlined",
+                "table-bordered",
+                "table-striped",
+                "table-dark",
+                "table-sm",
+                "table-busy"
+            ]);
+        });
+
+        it('should have a id based on props', () => {
+            const wrapper = shallowMount(Table, {
+                propsData: {
+                    fields: [{key: 'name'}],
+                    items: [{name: 'hoi'}],
+                    id: 'FooBar'
+                },
+            });
+            assert.deepStrictEqual(wrapper.find('table').attributes('id'), 'FooBar');
         });
     });
 
     describe('header', () => {
         it('should have a table header element', () => {
-            const wrapper = shallowMount(MinimalTable, {
+            const wrapper = shallowMount(Table, {
                 propsData: {
                     fields: [{key: 'name'}],
                     items: [{name: 'hoi'}],
@@ -37,7 +72,7 @@ describe('Vue minimal table', () => {
 
         describe('table header cells', () => {
             it('should show the field key in the header when there is no label given', () => {
-                const wrapper = shallowMount(MinimalTable, {
+                const wrapper = shallowMount(Table, {
                     propsData: {
                         fields: [{key: 'name'}],
                         items: [{name: 'hoi'}],
@@ -48,7 +83,7 @@ describe('Vue minimal table', () => {
             });
 
             it('should show the label in the header', () => {
-                const wrapper = shallowMount(MinimalTable, {
+                const wrapper = shallowMount(Table, {
                     propsData: {
                         fields: [{key: 'name', label: 'Naam'}],
                         items: [{name: 'hoi'}],
@@ -59,7 +94,7 @@ describe('Vue minimal table', () => {
             });
 
             it('should show the amount of headers as there are fields', () => {
-                const wrapper = shallowMount(MinimalTable, {
+                const wrapper = shallowMount(Table, {
                     propsData: {
                         fields: [{key: 'name'}, {key: 'street'}, {key: 'city'}, {key: 'email'}],
                         items: [{name: 'hoi'}],
@@ -73,7 +108,7 @@ describe('Vue minimal table', () => {
 
     describe('body', () => {
         it('should have a table body element', () => {
-            const wrapper = shallowMount(MinimalTable, {
+            const wrapper = shallowMount(Table, {
                 propsData: {
                     fields: [{key: 'name'}],
                     items: [{name: 'hoi'}],
@@ -85,53 +120,432 @@ describe('Vue minimal table', () => {
 
         describe('table data cells', () => {
             it('should show the text of the item belonging to the field key', () => {
-                const wrapper = shallowMount(MinimalTable, {
+                const wrapper = mount(Table, {
                     propsData: {
                         fields: [{key: 'name'}],
                         items: [{name: 'hoi'}],
                     },
                 });
 
-                assert.strictEqual(wrapper.find('tbody').find('tr').find('td').text(), 'hoi');
+                assert.strictEqual(wrapper.findComponent(Cell).text(), 'hoi');
+            });
+
+            it('should have table empty element if no items are provided', () => {
+                const wrapper = shallowMount(Table, {
+                    propsData: {
+                        fields: [{key: 'name'}],
+                        items: [],
+                    },
+                });
+
+                assert(wrapper.find('tbody').find('tr.b-table-empty-slot').exists());
             });
 
             it('should show the formatted text of the item belonging to the field formatter', () => {
-                const wrapper = shallowMount(MinimalTable, {
+                const wrapper = mount(Table, {
                     propsData: {
                         fields: [{key: 'name', formatter: () => 'nope'}],
                         items: [{name: 'hoi'}],
                     },
                 });
 
-                assert.strictEqual(wrapper.find('tbody').find('tr').find('td').text(), 'nope');
+                assert.strictEqual(wrapper.findComponent(Cell).text(), 'nope');
             });
 
-            it("should use a field's tdClass as its classname", () => {
-                const wrapper = shallowMount(MinimalTable, {
+            describe('scoped fields', () => {
+                it('should render scoped slots head', () => {
+                    const localVue = createLocalVue();
+
+                    const wrapper = mount(Table, {
+                        localVue,
+                        propsData: {
+                            fields: [{key: 'name'}],
+                            items: [],
+                        },
+                        scopedSlots: {
+                            'head': `<div>Hoi</div>`,
+                        },
+                    });
+                    assert.strictEqual(wrapper.find('thead').find('tr').find('th').text(), 'Hoi');
+                });
+
+                it('should render scoped slots head()', () => {
+                    const localVue = createLocalVue();
+
+                    const wrapper = mount(Table, {
+                        localVue,
+                        propsData: {
+                            fields: [{key: 'name'}],
+                            items: [],
+                        },
+                        scopedSlots: {
+                            'head()': `<div>Hoi</div>`,
+                        },
+                    });
+                    assert.strictEqual(wrapper.find('thead').find('tr').find('th').text(), 'Hoi');
+                });
+
+                it('should render scoped slots cell', () => {
+                    const localVue = createLocalVue();
+
+                    const wrapper = mount(Table, {
+                        localVue,
+                        propsData: {
+                            fields: [{key: 'name'}],
+                            items: [{name: 'foo bar'}],
+                        },
+                        scopedSlots: {
+                            'cell': `<div>Hoi</div>`,
+                        },
+                    });
+                    assert.strictEqual(wrapper.findComponent(Cell).text(), 'Hoi');
+                });
+
+                it('should render scoped slots cell()', () => {
+                    const localVue = createLocalVue();
+
+                    const wrapper = mount(Table, {
+                        localVue,
+                        propsData: {
+                            fields: [{key: 'name'}],
+                            items: [{name: 'foo bar'}],
+                        },
+                        scopedSlots: {
+                            'cell()': `<div>Hoi</div>`,
+                        },
+                    });
+                    assert.strictEqual(wrapper.findComponent(Cell).text(), 'Hoi');
+                });
+
+                it('should render scoped slots cell(name)', () => {
+                    const localVue = createLocalVue();
+
+                    const wrapper = mount(Table, {
+                        localVue,
+                        propsData: {
+                            fields: [{key: 'name'}],
+                            items: [{name: 'foo bar'}],
+                        },
+                        scopedSlots: {
+                            'cell(name)': `<div>Hoi</div>`,
+                        },
+                    });
+                    assert.strictEqual(wrapper.findComponent(Cell).text(), 'Hoi');
+                });
+
+                it('should NOT render scoped slots cell(does_not_exist)', () => {
+                    const localVue = createLocalVue();
+
+                    const wrapper = mount(Table, {
+                        localVue,
+                        propsData: {
+                            fields: [{key: 'name'}],
+                            items: [{name: 'foo bar'}],
+                        },
+                        scopedSlots: {
+                            'cell(does_not_exist)': `<div>Hoi</div>`,
+                        },
+                    });
+                    assert.strictEqual(wrapper.findComponent(Cell).text(), 'foo bar');
+                });
+
+                it('should only render one slot per cell', () => {
+                    const localVue = createLocalVue();
+
+                    const wrapper = mount(Table, {
+                        localVue,
+                        propsData: {
+                            fields: [{key: 'name'}],
+                            items: [{name: 'foo bar'}],
+                        },
+                        scopedSlots: {
+                            'cell': `<div>cell 1</div>`,
+                            'cell()': `<div>cell 2</div>`,
+                            'cell(name)': `<div>cell name</div>`,
+                            'cell(does_not_exist)': `<div>cell does_not_exist</div>`,
+                        },
+                    });
+                    assert.strictEqual(wrapper.findComponent(Cell).text(), 'cell name');
+                });
+
+                it('should render context scoped slots', () => {
+                    const localVue = createLocalVue();
+
+                    const wrapper = mount(Table, {
+                        localVue,
+                        propsData: {
+                            fields: [{key: 'name'}],
+                            items: [{name: 'foo bar'}],
+                            getContext: () => 'foo_bar',
+                        },
+                        scopedSlots: {
+                            'cell@foo_bar': `<div>Hoi</div>`,
+                        },
+                    });
+                    assert.strictEqual(wrapper.findComponent(Cell).text(), 'Hoi');
+                });
+
+                it('should render context based on field', () => {
+                    const localVue = createLocalVue();
+
+                    const wrapper = mount(Table, {
+                        localVue,
+                        propsData: {
+                            fields: [{key: 'name', getContext: () => 'foo_bar'}, {key: 'other'}],
+                            items: [{name: 'foo bar', other: 'other field content'}],
+                        },
+                        scopedSlots: {
+                            'cell@foo_bar': `<div>Hoi</div>`,
+                        },
+                    });
+                    assert.deepStrictEqual(['Hoi', 'other field content'], wrapper.findAllComponents(Cell).wrappers.map(el => el.text()));
+                });
+
+                it('should render context based on item', () => {
+                    const localVue = createLocalVue();
+
+                    const wrapper = mount(Table, {
+                        localVue,
+                        propsData: {
+                            fields: [{key: 'name'}],
+                            items: [{name: 'item 1', getContext: () => 'foo_bar'}, {name: 'item 2'}],
+                        },
+                        scopedSlots: {
+                            'cell@foo_bar': `<div>Hoi</div>`,
+                        },
+                    });
+                    assert.deepStrictEqual(['Hoi', 'item 2'], wrapper.findAllComponents(Cell).wrappers.map(el => el.text()));
+                });
+
+                it('should not render invalid scoped slot name', () => {
+                    const localVue = createLocalVue();
+
+                    const wrapper = mount(Table, {
+                        localVue,
+                        propsData: {
+                            fields: [{key: 'name'}],
+                            items: [{name: 'foo bar'}],
+                            getContext: () => 'foo_bar',
+                        },
+                        scopedSlots: {
+                            'cell@nope': `<div>Hoi</div>`,
+                        },
+                    });
+                    assert.strictEqual(wrapper.findComponent(Cell).text(), 'foo bar');
+                });
+
+                it('should render context scoped slots cell scoped', () => {
+                    const localVue = createLocalVue();
+
+                    const wrapper = mount(Table, {
+                        localVue,
+                        propsData: {
+                            fields: [{key: 'name'}],
+                            items: [{name: 'foo bar'}],
+                            getContext: () => 'foo_bar',
+                        },
+                        scopedSlots: {
+                            'cell(name)@foo_bar': `<div>Hoi</div>`,
+                        },
+                    });
+                    assert.strictEqual(wrapper.findComponent(Cell).text(), 'Hoi');
+                });
+
+                it('should render context scoped slots over normal slot', () => {
+                    const localVue = createLocalVue();
+
+                    const wrapper = mount(Table, {
+                        localVue,
+                        propsData: {
+                            fields: [{key: 'name'}],
+                            items: [{name: 'foo bar'}],
+                            getContext: () => 'foo_bar',
+                        },
+                        scopedSlots: {
+                            'cell@foo_bar': `<div>GOOD</div>`,
+                            'cell': `<div>WRONG</div>`,
+                        },
+                    });
+                    assert.strictEqual(wrapper.findComponent(Cell).text(), 'GOOD');
+                });
+
+                it('should render cell scoped slots over context slot', () => {
+                    const localVue = createLocalVue();
+
+                    const wrapper = mount(Table, {
+                        localVue,
+                        propsData: {
+                            fields: [{key: 'name'}],
+                            items: [{name: 'foo bar'}],
+                            getContext: () => 'foo_bar',
+                        },
+                        scopedSlots: {
+                            'cell(name)': `<div>GOOD</div>`,
+                            'cell@foo_bar': `<div>WRONG</div>`,
+                        },
+                    });
+                    assert.strictEqual(wrapper.findComponent(Cell).text(), 'GOOD');
+                });
+
+                it('render correct slot if all kinds are provided NO context', () => {
+                    const localVue = createLocalVue();
+
+                    const wrapper = mount(Table, {
+                        localVue,
+                        propsData: {
+                            fields: [{key: 'name'}],
+                            items: [{name: 'foo bar'}],
+                        },
+                        scopedSlots: {
+                            'cell': `<div>cell</div>`,
+                            'cell()': `<div>cell()</div>`,
+                            'cell@foo_bar': `<div>cell@foo_bar</div>`,
+                            'cell()@foo_bar': `<div>cell()@foo_bar</div>`,
+                            'cell(name)': `<div>cell(name)</div>`, // GOOD
+                            'cell(name)@foo_bar': `<div>cell(name)@foo_bar</div>`,
+                        },
+                    });
+                    assert.strictEqual(wrapper.findComponent(Cell).text(), 'cell(name)');
+                });
+
+                it('render correct slot if all kinds are provided with context', () => {
+                    const localVue = createLocalVue();
+
+                    const wrapper = mount(Table, {
+                        localVue,
+                        propsData: {
+                            fields: [{key: 'name'}],
+                            items: [{name: 'foo bar'}],
+                            getContext: () => 'foo_bar',
+                        },
+                        scopedSlots: {
+                            'cell': `<div>cell</div>`,
+                            'cell()': `<div>cell()</div>`,
+                            'cell@foo_bar': `<div>cell@foo_bar</div>`,
+                            'cell()@foo_bar': `<div>cell()@foo_bar</div>`,
+                            'cell(name)': `<div>cell(name)</div>`,
+                            'cell(name)@foo_bar': `<div>cell(name)@foo_bar</div>`, // GOOD
+                        },
+                    });
+                    assert.strictEqual(wrapper.findComponent(Cell).text(), 'cell(name)@foo_bar');
+                });
+            });
+
+            it('should render data returned using formatter', () => {
+                const wrapper = mount(Table, {
                     propsData: {
-                        fields: [{key: 'name', tdClass: () => 'rood'}],
-                        items: [{name: 'hoi'}],
+                        fields: [{key: 'name', formatter: () => 'Hoi'}],
+                        items: [{}],
                     },
                 });
-                assert(wrapper.find('.rood').exists());
+                assert.strictEqual(wrapper.findComponent(Cell).text(), 'Hoi');
             });
 
-            it('should render scoped slots', () => {
-                const wrapper = shallowMount(MinimalTable, {
+            it('should render data returned using formatter using item data', () => {
+                const wrapper = mount(Table, {
+                    propsData: {
+                        fields: [{key: 'name', formatter: item => item.customProperty}],
+                        items: [{customProperty: 'Hoi'}],
+                    },
+                });
+                assert.strictEqual(wrapper.find('td').text(), 'Hoi');
+            });
+
+            it('should render multiple rows of data', () => {
+                const wrapper = mount(Table, {
                     propsData: {
                         fields: [{key: 'name'}],
-                        items: [{name: 'hoi'}],
-                    },
-                    scopedSlots: {
-                        'cell(name)': `<test-tag>Hoi</test-tag>`,
+                        items: [{name: 'foo'}, {name: 'bar'}],
                     },
                 });
-                assert(wrapper.find('test-tag').exists());
+
+                assert.deepStrictEqual(wrapper.findAll('td').wrappers.map(d => d.text()), ['foo', 'bar']);
+            });
+
+            it('should render changes made to items', async() => {
+                const wrapper = mount(Table, {
+                    propsData: {
+                        fields: [{key: 'name'}],
+                        items: [{name: 'foo'}],
+                    },
+                });
+
+                await wrapper.setProps({items: [{name: 'foo'}, {name: 'bar'}]});
+                assert.deepStrictEqual(wrapper.findAll('td').wrappers.map(d => d.text()), ['foo', 'bar']);
+
+                await wrapper.setProps({items: [{name: 'foo'}, {name: 'bar'}, {name: 'baz'}]});
+                assert.deepStrictEqual(wrapper.findAll('td').wrappers.map(d => d.text()), ['foo', 'bar', 'baz']);
+
+                await wrapper.setProps({items: [{name: 'hoi'}]});
+                assert.deepStrictEqual(wrapper.findAll('td').wrappers.map(d => d.text()), ['hoi']);
+            });
+
+            it('should render loading if busy', () => {
+                const wrapper = mount(Table, {
+                    propsData: {
+                        fields: [{key: 'name'}],
+                        busy: true,
+                    },
+                });
+
+                assert.strictEqual(wrapper.findAll('td').wrappers.length, 1);
+                assert.strictEqual(wrapper.find('td').text(), 'Loading...');
+            });
+
+            it('should render loading or items when busy it toggled', async() => {
+                const wrapper = mount(Table, {
+                    propsData: {
+                        fields: [{key: 'name'}],
+                        items: [{name: 'foo'}, {name: 'bar'}, {name: 'baz'}],
+                        busy: false,
+                    },
+                });
+
+                assert.strictEqual(wrapper.findAll('td').wrappers.length, 3);
+
+                await wrapper.setProps({busy: true});
+                assert.strictEqual(wrapper.findAll('td').wrappers.length, 1);
+                assert.strictEqual(wrapper.find('td').text(), 'Loading...');
+
+                await wrapper.setProps({busy: false});
+                assert.strictEqual(wrapper.findAll('td').wrappers.length, 3);
+            });
+
+            it('should render lines in correct order when sort is provided', () => {
+                const wrapper = mount(Table, {
+                    propsData: {
+                        sortBy: 'name',
+                        sort: 'ascending',
+                        fields: [{key: 'name'}],
+                        items: [{name: 'foo'}, {name: 'bar'}],
+                    },
+                });
+
+                assert.deepStrictEqual(wrapper.findAll('td').wrappers.map(d => d.text()), ['bar', 'foo']);
+            });
+
+            it('should render lines in correct order when sort changes', async() => {
+                const wrapper = mount(Table, {
+                    propsData: {
+                        sortBy: 'name',
+                        sort: 'ascending',
+                        fields: [{key: 'name'}],
+                        items: [{name: 'foo'}, {name: 'bar'}],
+                    },
+                });
+
+                assert.deepStrictEqual(wrapper.findAllComponents(Cell).wrappers.map(d => d.text()), ['bar', 'foo']);
+
+                await wrapper.setProps({sort: 'descending'});
+                assert.deepStrictEqual(wrapper.findAllComponents(Cell).wrappers.map(d => d.text()), ['foo', 'bar']);
+
+                await wrapper.setProps({sort: 'ascending'});
+                assert.deepStrictEqual(wrapper.findAllComponents(Cell).wrappers.map(d => d.text()), ['bar', 'foo']);
             });
 
             it('should emit when a row is clicked', () => {
                 let testResult = false;
-                const wrapper = shallowMount(MinimalTable, {
+                const wrapper = mount(Table, {
                     propsData: {
                         fields: [{key: 'name'}],
                         items: [{name: 'hoi!'}],
@@ -142,7 +556,7 @@ describe('Vue minimal table', () => {
                         },
                     },
                 });
-                const row = wrapper.findAll('td');
+                const row = wrapper.findAllComponents(Cell);
                 row.trigger('click');
 
                 assert.strictEqual(testResult, true);
@@ -150,7 +564,7 @@ describe('Vue minimal table', () => {
 
             it('a row should also emit when a formatter is clicked', () => {
                 let testResult = false;
-                const wrapper = shallowMount(MinimalTable, {
+                const wrapper = mount(Table, {
                     propsData: {
                         fields: [{key: 'name', formatter: () => 'harry'}],
                         items: [{name: 'hoi!'}],
@@ -161,7 +575,7 @@ describe('Vue minimal table', () => {
                         },
                     },
                 });
-                const row = wrapper.find('td');
+                const row = wrapper.findComponent(Cell);
                 row.trigger('click');
 
                 assert.strictEqual(testResult, true);
@@ -169,13 +583,13 @@ describe('Vue minimal table', () => {
 
             it('should not emit when a row is clicked without a listener', () => {
                 let testResult = false;
-                const wrapper = shallowMount(MinimalTable, {
+                const wrapper = mount(Table, {
                     propsData: {
                         fields: [{key: 'name'}],
                         items: [{name: 'hoi!'}],
                     },
                 });
-                const row = wrapper.findAll('td');
+                const row = wrapper.findAllComponents(Cell);
                 row.trigger('click');
 
                 assert.strictEqual(testResult, false);
@@ -183,27 +597,27 @@ describe('Vue minimal table', () => {
 
             it('when no listener is defined, a row should not emit', () => {
                 let testResult = false;
-                const wrapper = shallowMount(MinimalTable, {
+                const wrapper = mount(Table, {
                     propsData: {
                         fields: [{key: 'name', formatter: () => 'harry'}],
                         items: [{name: 'hoi!'}],
                     },
                 });
-                const row = wrapper.find('td');
+                const row = wrapper.findComponent(Cell);
                 row.trigger('click');
 
                 assert.strictEqual(testResult, false);
             });
 
             it('should sort when a sortBy prop was passed', () => {
-                const wrapper = shallowMount(MinimalTable, {
+                const wrapper = mount(Table, {
                     propsData: {
                         fields: [{key: 'name'}],
                         items: [{name: 'Xantippe'}, {name: 'Adam'}, {name: 'Harry'}],
                         sortBy: 'name',
                     },
                 });
-                const tds = wrapper.findAll('td');
+                const tds = wrapper.findAllComponents(Cell);
                 const tableNames = [];
                 for (let i = 0; i < tds.length; i++) {
                     tableNames.push(tds.at(i).text());
@@ -213,6 +627,98 @@ describe('Vue minimal table', () => {
             });
 
             // TODO :: not all sorting lines are covered
+        });
+    });
+
+    describe('tdClass & thClass argument', () => {
+        ['tdClass', 'thClass'].map(name => {
+            it(name+" with simple string should appear in dom", () => {
+                const wrapper = mount(Table, {
+                    propsData: {
+                        fields: [{key: 'name', [name]: 'rood'}],
+                        items: [{name: 'hoi'}],
+                    },
+                });
+                if (name == 'thClass') {
+                    assert(wrapper.find('.rood').exists());
+                } else {
+                    assert.deepStrictEqual(wrapper.findComponent(Cell).classes(), ['rood']);
+                }
+            });
+
+            it(name+" with multiple in one string should appear in dom", () => {
+                const wrapper = mount(Table, {
+                    propsData: {
+                        fields: [{key: 'name', [name]: 'foo bar'}],
+                        items: [{name: 'hoi'}],
+                    },
+                });
+                if (name == 'thClass') {
+                    assert(wrapper.find('.foo.bar').exists());
+                } else {
+                    assert.deepStrictEqual(wrapper.findComponent(Cell).classes(), ['foo', 'bar']);
+                }
+            });
+
+            it(name+" with multiple in array should appear in dom", () => {
+                const wrapper = mount(Table, {
+                    propsData: {
+                        fields: [{key: 'name', [name]: ['foo', 'bar']}],
+                        items: [{name: 'hoi'}],
+                    },
+                });
+                if (name == 'thClass') {
+                    assert(wrapper.find('.foo.bar').exists());
+                } else {
+                    assert.deepStrictEqual(wrapper.findComponent(Cell).classes(), ['foo', 'bar']);
+                }
+            });
+
+            it(name+" with function returning string should appear in dom", () => {
+                const wrapper = mount(Table, {
+                    propsData: {
+                        fields: [{key: 'name', [name]: () => 'foo bar'}],
+                        items: [{name: 'hoi'}],
+                    },
+                });
+                if (name == 'thClass') {
+                    assert(wrapper.find('.foo.bar').exists());
+                } else {
+                    assert.deepStrictEqual(wrapper.findComponent(Cell).classes(), ['foo', 'bar']);
+                }
+            });
+
+            it(name+" with function returning array should appear in dom", () => {
+                const wrapper = mount(Table, {
+                    propsData: {
+                        fields: [{key: 'name', [name]: () => ['foo', 'bar']}],
+                        items: [{name: 'hoi'}],
+                    },
+                });
+                if (name == 'thClass') {
+                    assert(wrapper.find('.foo.bar').exists());
+                } else {
+                    assert.deepStrictEqual(wrapper.findComponent(Cell).classes(), ['foo', 'bar']);
+                }
+            });
+
+            it(name+" should have no added classes when none are provided", () => {
+                const wrapper = mount(Table, {
+                    propsData: {
+                        fields: [{key: 'name'}],
+                        items: [{name: 'hoi'}],
+                    },
+                });
+
+                const elName = name.substring(0, 2);
+                if (elName == 'th') {
+                    const classes = wrapper.find(elName).classes().join(' ').trim();
+                    assert.deepStrictEqual(classes, 'header');
+                } else {
+                    const cell = wrapper.findComponent(Cell);
+                    assert.deepStrictEqual(cell.classes().join(' ').trim(), '');
+                }
+            });
         });
     });
 });
