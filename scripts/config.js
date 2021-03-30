@@ -10,7 +10,7 @@ export default [
                 // SSR build.
                 file: pkg.main,
                 format: 'cjs',
-                exports: 'auto',
+                exports: 'named',
             },
             {
                 // ESM build to be used with webpack/rollup.
