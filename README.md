@@ -69,7 +69,7 @@ Array<{
 }>
 ```
 
-### `item: Array<Item>`
+### `items: Array<Item>`
 
 The table data with every array item as row and the item data as fields, note that the `key` of the fields property will be used to select what to show.
 
