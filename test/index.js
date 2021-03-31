@@ -1,7 +1,7 @@
 require('jsdom-global')();
 const assert = require('assert');
 const {InternalCell, VueFastTable} = require('../dist/index.ssr');
-const {createLocalVue, shallowMount, mount} = require('@vue/test-utils');
+const {shallowMount, mount} = require('@vue/test-utils');
 
 const Cell = InternalCell;
 const Table = VueFastTable;
@@ -153,11 +153,8 @@ describe('Vue minimal table', () => {
             });
 
             describe('scoped fields', () => {
-                it('should render scoped slots head', () => {
-                    const localVue = createLocalVue();
-
+                it('should render scoped slots #head', () => {
                     const wrapper = mount(Table, {
-                        localVue,
                         propsData: {
                             fields: [{key: 'name'}],
                             items: [],
@@ -169,11 +166,8 @@ describe('Vue minimal table', () => {
                     assert.strictEqual(wrapper.find('thead').find('tr').find('th').text(), 'Hoi');
                 });
 
-                it('should render scoped slots head()', () => {
-                    const localVue = createLocalVue();
-
+                it('should render scoped slots #head()', () => {
                     const wrapper = mount(Table, {
-                        localVue,
                         propsData: {
                             fields: [{key: 'name'}],
                             items: [],
@@ -185,11 +179,21 @@ describe('Vue minimal table', () => {
                     assert.strictEqual(wrapper.find('thead').find('tr').find('th').text(), 'Hoi');
                 });
 
-                it('should render scoped slots cell', () => {
-                    const localVue = createLocalVue();
-
+                it('should render a #row slot', () => {
                     const wrapper = mount(Table, {
-                        localVue,
+                        propsData: {
+                            fields: [{key: 'name'}],
+                            items: [{name: 'foo bar'}],
+                        },
+                        scopedSlots: {
+                            'row': `<div>Hoi</div>`,
+                        },
+                    });
+                    assert.strictEqual(wrapper.find('tbody').text(), 'Hoi');
+                });
+
+                it('should render scoped slots #cell', () => {
+                    const wrapper = mount(Table, {
                         propsData: {
                             fields: [{key: 'name'}],
                             items: [{name: 'foo bar'}],
@@ -201,11 +205,8 @@ describe('Vue minimal table', () => {
                     assert.strictEqual(wrapper.findComponent(Cell).text(), 'Hoi');
                 });
 
-                it('should render scoped slots cell()', () => {
-                    const localVue = createLocalVue();
-
+                it('should render scoped slots #cell()', () => {
                     const wrapper = mount(Table, {
-                        localVue,
                         propsData: {
                             fields: [{key: 'name'}],
                             items: [{name: 'foo bar'}],
@@ -217,11 +218,8 @@ describe('Vue minimal table', () => {
                     assert.strictEqual(wrapper.findComponent(Cell).text(), 'Hoi');
                 });
 
-                it('should render scoped slots cell(name)', () => {
-                    const localVue = createLocalVue();
-
+                it('should render scoped slots #cell(name)', () => {
                     const wrapper = mount(Table, {
-                        localVue,
                         propsData: {
                             fields: [{key: 'name'}],
                             items: [{name: 'foo bar'}],
@@ -233,11 +231,8 @@ describe('Vue minimal table', () => {
                     assert.strictEqual(wrapper.findComponent(Cell).text(), 'Hoi');
                 });
 
-                it('should NOT render scoped slots cell(does_not_exist)', () => {
-                    const localVue = createLocalVue();
-
+                it('should NOT render scoped slots #cell(does_not_exist)', () => {
                     const wrapper = mount(Table, {
-                        localVue,
                         propsData: {
                             fields: [{key: 'name'}],
                             items: [{name: 'foo bar'}],
@@ -249,11 +244,8 @@ describe('Vue minimal table', () => {
                     assert.strictEqual(wrapper.findComponent(Cell).text(), 'foo bar');
                 });
 
-                it('should only render one slot per cell', () => {
-                    const localVue = createLocalVue();
-
+                it('should only render one slot per #cell', () => {
                     const wrapper = mount(Table, {
-                        localVue,
                         propsData: {
                             fields: [{key: 'name'}],
                             items: [{name: 'foo bar'}],
@@ -269,10 +261,7 @@ describe('Vue minimal table', () => {
                 });
 
                 it('should render context scoped slots', () => {
-                    const localVue = createLocalVue();
-
                     const wrapper = mount(Table, {
-                        localVue,
                         propsData: {
                             fields: [{key: 'name'}],
                             items: [{name: 'foo bar'}],
@@ -286,10 +275,7 @@ describe('Vue minimal table', () => {
                 });
 
                 it('should render context based on field', () => {
-                    const localVue = createLocalVue();
-
                     const wrapper = mount(Table, {
-                        localVue,
                         propsData: {
                             fields: [{key: 'name', getContext: () => 'foo_bar'}, {key: 'other'}],
                             items: [{name: 'foo bar', other: 'other field content'}],
@@ -302,10 +288,7 @@ describe('Vue minimal table', () => {
                 });
 
                 it('should render context based on item', () => {
-                    const localVue = createLocalVue();
-
                     const wrapper = mount(Table, {
-                        localVue,
                         propsData: {
                             fields: [{key: 'name'}],
                             items: [{name: 'item 1', getContext: () => 'foo_bar'}, {name: 'item 2'}],
@@ -318,10 +301,7 @@ describe('Vue minimal table', () => {
                 });
 
                 it('should not render invalid scoped slot name', () => {
-                    const localVue = createLocalVue();
-
                     const wrapper = mount(Table, {
-                        localVue,
                         propsData: {
                             fields: [{key: 'name'}],
                             items: [{name: 'foo bar'}],
@@ -335,10 +315,7 @@ describe('Vue minimal table', () => {
                 });
 
                 it('should render context scoped slots cell scoped', () => {
-                    const localVue = createLocalVue();
-
                     const wrapper = mount(Table, {
-                        localVue,
                         propsData: {
                             fields: [{key: 'name'}],
                             items: [{name: 'foo bar'}],
@@ -352,10 +329,7 @@ describe('Vue minimal table', () => {
                 });
 
                 it('should render context scoped slots over normal slot', () => {
-                    const localVue = createLocalVue();
-
                     const wrapper = mount(Table, {
-                        localVue,
                         propsData: {
                             fields: [{key: 'name'}],
                             items: [{name: 'foo bar'}],
@@ -370,10 +344,7 @@ describe('Vue minimal table', () => {
                 });
 
                 it('should render cell scoped slots over context slot', () => {
-                    const localVue = createLocalVue();
-
                     const wrapper = mount(Table, {
-                        localVue,
                         propsData: {
                             fields: [{key: 'name'}],
                             items: [{name: 'foo bar'}],
@@ -388,10 +359,7 @@ describe('Vue minimal table', () => {
                 });
 
                 it('render correct slot if all kinds are provided NO context', () => {
-                    const localVue = createLocalVue();
-
                     const wrapper = mount(Table, {
-                        localVue,
                         propsData: {
                             fields: [{key: 'name'}],
                             items: [{name: 'foo bar'}],
@@ -409,10 +377,7 @@ describe('Vue minimal table', () => {
                 });
 
                 it('render correct slot if all kinds are provided with context', () => {
-                    const localVue = createLocalVue();
-
                     const wrapper = mount(Table, {
-                        localVue,
                         propsData: {
                             fields: [{key: 'name'}],
                             items: [{name: 'foo bar'}],

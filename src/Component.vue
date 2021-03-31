@@ -61,33 +61,38 @@
                     </td>
                 </tr>
 
-                <tr
+                <slot
                     v-for="item of sortedItems"
                     v-else
-                    :key="item.__id"
-                    class="b-table-data"
-                    role="row"
-                    @click="$emit('row-clicked', item)"
+                    name="row"
+                    v-bind="item"
                 >
-                    <Cell
-                        v-for="field of fields"
-                        :key="field.key"
-                        :item="item"
-                        :field="field"
-                        :get-context="getContext"
-                        @click="$emit('cell-click', $event)"
-                        @dblclick="$emit('cell-dblclick', $event)"
+                    <tr
+                        :key="item.__id"
+                        class="b-table-data"
+                        role="row"
+                        @click="$emit('row-clicked', item)"
                     >
-                        <template #default="extendedItem">
-                            <slot
-                                v-bind="extendedItem"
-                                :name="getSlotName(extendedItem)"
-                            >
-                                {{ item[field.key] || '' }}
-                            </slot>
-                        </template>
-                    </Cell>
-                </tr>
+                        <Cell
+                            v-for="field of fields"
+                            :key="field.key"
+                            :item="item"
+                            :field="field"
+                            :get-context="getContext"
+                            @click="$emit('cell-click', $event)"
+                            @dblclick="$emit('cell-dblclick', $event)"
+                        >
+                            <template #default="extendedItem">
+                                <slot
+                                    v-bind="extendedItem"
+                                    :name="getSlotName(extendedItem)"
+                                >
+                                    {{ item[field.key] || '' }}
+                                </slot>
+                            </template>
+                        </Cell>
+                    </tr>
+                </slot>
             </tbody>
         </table>
     </div>

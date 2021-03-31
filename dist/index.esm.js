@@ -436,62 +436,69 @@ var __vue_render__ = function() {
                 ]
               )
             : _vm._l(_vm.sortedItems, function(item) {
-                return _c(
-                  "tr",
-                  {
-                    key: item.__id,
-                    staticClass: "b-table-data",
-                    attrs: { role: "row" },
-                    on: {
-                      click: function($event) {
-                        return _vm.$emit("row-clicked", item)
-                      }
-                    }
-                  },
-                  _vm._l(_vm.fields, function(field) {
-                    return _c("Cell", {
-                      key: field.key,
-                      attrs: {
-                        item: item,
-                        field: field,
-                        "get-context": _vm.getContext
-                      },
-                      on: {
-                        click: function($event) {
-                          return _vm.$emit("cell-click", $event)
-                        },
-                        dblclick: function($event) {
-                          return _vm.$emit("cell-dblclick", $event)
+                return _vm._t(
+                  "row",
+                  [
+                    _c(
+                      "tr",
+                      {
+                        key: item.__id,
+                        staticClass: "b-table-data",
+                        attrs: { role: "row" },
+                        on: {
+                          click: function($event) {
+                            return _vm.$emit("row-clicked", item)
+                          }
                         }
                       },
-                      scopedSlots: _vm._u(
-                        [
-                          {
-                            key: "default",
-                            fn: function(extendedItem) {
-                              return [
-                                _vm._t(
-                                  _vm.getSlotName(extendedItem),
-                                  [
-                                    _vm._v(
-                                      "\n                            " +
-                                        _vm._s(item[field.key] || "") +
-                                        "\n                        "
-                                    )
-                                  ],
-                                  null,
-                                  extendedItem
-                                )
-                              ]
+                      _vm._l(_vm.fields, function(field) {
+                        return _c("Cell", {
+                          key: field.key,
+                          attrs: {
+                            item: item,
+                            field: field,
+                            "get-context": _vm.getContext
+                          },
+                          on: {
+                            click: function($event) {
+                              return _vm.$emit("cell-click", $event)
+                            },
+                            dblclick: function($event) {
+                              return _vm.$emit("cell-dblclick", $event)
                             }
-                          }
-                        ],
-                        null,
-                        true
-                      )
-                    })
-                  }),
-                  1
+                          },
+                          scopedSlots: _vm._u(
+                            [
+                              {
+                                key: "default",
+                                fn: function(extendedItem) {
+                                  return [
+                                    _vm._t(
+                                      _vm.getSlotName(extendedItem),
+                                      [
+                                        _vm._v(
+                                          "\n                                " +
+                                            _vm._s(item[field.key] || "") +
+                                            "\n                            "
+                                        )
+                                      ],
+                                      null,
+                                      extendedItem
+                                    )
+                                  ]
+                                }
+                              }
+                            ],
+                            null,
+                            true
+                          )
+                        })
+                      }),
+                      1
+                    )
+                  ],
+                  null,
+                  item
                 )
               })
         ],
