@@ -26,14 +26,14 @@ var script$1 = {
             var _a;
             const item = Object.assign({}, this.item);
             item.__key = this.field.key;
-            if (this.getContext) {
-                item.__context = this.getContext(item);
-            }
-            else if ((_a = this.field) === null || _a === void 0 ? void 0 : _a.getContext) {
+            if ((_a = this.field) === null || _a === void 0 ? void 0 : _a.getContext) {
                 item.__context = this.field.getContext(item);
             }
             else if (item === null || item === void 0 ? void 0 : item.getContext) {
                 item.__context = item.getContext(item);
+            }
+            else if (this.getContext) {
+                item.__context = this.getContext(item);
             }
             return item;
         },
