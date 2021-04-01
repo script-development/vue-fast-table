@@ -62,7 +62,8 @@ Array<{
     thClass?: (() => string[] | string) | string | string[];
     // Class(es) to add to every <td> element
     tdClass?: ((item: Item) => string[] | string) | string | string[];
-    // provide a item with a context (ONLY ALPHABETIC CHARACTERS AND _)
+    // provide a item with a context
+    // ONLY ALPHABETIC CHARACTERS AND _
     getContext?: (item: Item) => string;
     // Format the field data
     formatter?: (item: Item) => any;
@@ -78,7 +79,8 @@ Array<{
     // The data to show in the table, key needs to match field keys
     [key: string]: any;
 
-    // provide a item with a context (ONLY ALPHABETIC CHARACTERS AND _)
+    // provide a item with a context
+    // ONLY ALPHABETIC CHARACTERS AND _
     // item.__key can be used to identify the field
     getContext?: (item: Item) => string;
 
@@ -172,7 +174,7 @@ Toggle the table busy state
 
 ### `getContext: (item: Item) => string`
 
-Provide a item with a context (ONLY ALPHABETIC CHARACTERS AND \_)
+Provide a item with a context **(ONLY ALPHABETIC CHARACTERS AND \_)**
 
 The `item.__key` will contain the field key
 
@@ -180,7 +182,7 @@ The `item.__key` will contain the field key
 
 ### header field `#head`
 
-Format the header fields _(can also be written as: `head()`)_
+Format the header fields _(can also be written as: `#head()`)_
 
 ```html
 <VueFastTable>
@@ -192,7 +194,7 @@ Format the header fields _(can also be written as: `head()`)_
 
 ### all cells `#cell`
 
-Format the cell fields _(can also be written as: `head()`)_
+Format the cell fields _(can also be written as: `#cell()`)_
 
 ```html
 <VueFastTable>
@@ -214,7 +216,7 @@ Format a specific cell by field key
 </VueFastTable>
 ```
 
-### context `#cell@context_value_here` or `#cell(field_key_here)@context_value_here`
+### context `#cell@ctx_value` or `#cell(field_key)@ctx_value`
 
 Format cell(s) based on a given context
 
