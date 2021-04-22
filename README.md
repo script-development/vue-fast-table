@@ -160,6 +160,12 @@ A field key to sort the data by
 
 If sortBy is provided what way should the data be sorted
 
+### `sortFn: (a: Item, b: Item) => 1 | 0 | -1`
+
+Custom sort function for a more advanced search.
+
+Note: if `sort = 'descending'` the outputs will be swapped _(1 will become -1 and -1 will become 1)_
+
 ### `id: string`
 
 An id to provide to the table
@@ -214,6 +220,20 @@ Format a specific cell by field key
         <div>{{ item.name }}</div>
     </template>
 </VueFastTable>
+```
+
+### full item row control `#row`
+
+The "do it yourself" item row.
+Example:
+
+```html
+<template #row="item">
+    <tr :key="item.__id">
+        <td>{{ item.name }}</td>
+        <td>{{ item.age }}</td>
+    </tr>
+</template>
 ```
 
 ### context `#cell@ctx_value` or `#cell(field_key)@ctx_value`

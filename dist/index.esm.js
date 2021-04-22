@@ -234,6 +234,10 @@ var script = {
             type: String,
             default: undefined,
         },
+        sortFn: {
+            type: Function,
+            default: undefined,
+        },
         id: {
             type: String,
             default: undefined,
@@ -281,6 +285,11 @@ var script = {
                 this.sortItems();
             }
         },
+        sortFn(newVal, oldVal) {
+            if (newVal !== oldVal) {
+                this.sortItems();
+            }
+        },
         fields() {
             this.sortItems();
         },
@@ -316,7 +325,10 @@ var script = {
         },
         sortItems() {
             const items = [...this.items];
-            if (this.sortBy && items.length > 1) {
+            if (this.sortFn) {
+                items.sort((a, b) => this.sortFn(a, b) * (this.sort == 'descending' ? -1 : 1));
+            }
+            else if (this.sortBy && items.length > 1) {
                 items.sort((a, b) => {
                     const field = this.fields.find(f => f.key === this.sortBy);
                     let item1, item2;
