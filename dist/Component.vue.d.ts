@@ -51,6 +51,10 @@ declare const _default: {
             type: StringConstructor;
             default: any;
         };
+        sortFn: {
+            type: PropType<(_a: Item, _b: Item) => 1 | 0 | -1>;
+            default: any;
+        };
         id: {
             type: StringConstructor;
             default: any;
@@ -75,6 +79,7 @@ declare const _default: {
         items(): void;
         sortBy(newVal: any, oldVal: any): void;
         sort(newVal: any, oldVal: any): void;
+        sortFn(newVal: any, oldVal: any): void;
         fields(): void;
     };
     beforeMount(): void;

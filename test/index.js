@@ -1,7 +1,7 @@
 require('jsdom-global')();
 const assert = require('assert');
-const {InternalCell, VueFastTable} = require('../dist/index.ssr');
-const {shallowMount, mount} = require('@vue/test-utils');
+const { InternalCell, VueFastTable } = require('../dist/index.ssr');
+const { shallowMount, mount } = require('@vue/test-utils');
 
 const Cell = InternalCell;
 const Table = VueFastTable;
@@ -20,14 +20,14 @@ describe('Vue minimal table', () => {
         it('should have a classname based on props', () => {
             const wrapper = shallowMount(Table, {
                 propsData: {
-                    fields: [{key: 'name'}],
-                    items: [{name: 'hoi'}],
+                    fields: [{ key: 'name' }],
+                    items: [{ name: 'hoi' }],
                     borderless: true,
                     hover: true,
                     small: true,
-                    outlined:true,
+                    outlined: true,
                     bordered: true,
-                    striped:true,
+                    striped: true,
                     dark: true,
                     busy: true,
                 },
@@ -49,8 +49,8 @@ describe('Vue minimal table', () => {
         it('should have a id based on props', () => {
             const wrapper = shallowMount(Table, {
                 propsData: {
-                    fields: [{key: 'name'}],
-                    items: [{name: 'hoi'}],
+                    fields: [{ key: 'name' }],
+                    items: [{ name: 'hoi' }],
                     id: 'FooBar'
                 },
             });
@@ -62,8 +62,8 @@ describe('Vue minimal table', () => {
         it('should have a table header element', () => {
             const wrapper = shallowMount(Table, {
                 propsData: {
-                    fields: [{key: 'name'}],
-                    items: [{name: 'hoi'}],
+                    fields: [{ key: 'name' }],
+                    items: [{ name: 'hoi' }],
                 },
             });
 
@@ -74,8 +74,8 @@ describe('Vue minimal table', () => {
             it('should show the field key in the header when there is no label given', () => {
                 const wrapper = shallowMount(Table, {
                     propsData: {
-                        fields: [{key: 'name'}],
-                        items: [{name: 'hoi'}],
+                        fields: [{ key: 'name' }],
+                        items: [{ name: 'hoi' }],
                     },
                 });
 
@@ -85,8 +85,8 @@ describe('Vue minimal table', () => {
             it('should show the label in the header', () => {
                 const wrapper = shallowMount(Table, {
                     propsData: {
-                        fields: [{key: 'name', label: 'Naam'}],
-                        items: [{name: 'hoi'}],
+                        fields: [{ key: 'name', label: 'Naam' }],
+                        items: [{ name: 'hoi' }],
                     },
                 });
 
@@ -96,8 +96,8 @@ describe('Vue minimal table', () => {
             it('should show the amount of headers as there are fields', () => {
                 const wrapper = shallowMount(Table, {
                     propsData: {
-                        fields: [{key: 'name'}, {key: 'street'}, {key: 'city'}, {key: 'email'}],
-                        items: [{name: 'hoi'}],
+                        fields: [{ key: 'name' }, { key: 'street' }, { key: 'city' }, { key: 'email' }],
+                        items: [{ name: 'hoi' }],
                     },
                 });
 
@@ -110,8 +110,8 @@ describe('Vue minimal table', () => {
         it('should have a table body element', () => {
             const wrapper = shallowMount(Table, {
                 propsData: {
-                    fields: [{key: 'name'}],
-                    items: [{name: 'hoi'}],
+                    fields: [{ key: 'name' }],
+                    items: [{ name: 'hoi' }],
                 },
             });
 
@@ -122,8 +122,8 @@ describe('Vue minimal table', () => {
             it('should show the text of the item belonging to the field key', () => {
                 const wrapper = mount(Table, {
                     propsData: {
-                        fields: [{key: 'name'}],
-                        items: [{name: 'hoi'}],
+                        fields: [{ key: 'name' }],
+                        items: [{ name: 'hoi' }],
                     },
                 });
 
@@ -133,7 +133,7 @@ describe('Vue minimal table', () => {
             it('should have table empty element if no items are provided', () => {
                 const wrapper = shallowMount(Table, {
                     propsData: {
-                        fields: [{key: 'name'}],
+                        fields: [{ key: 'name' }],
                         items: [],
                     },
                 });
@@ -144,8 +144,8 @@ describe('Vue minimal table', () => {
             it('should show the formatted text of the item belonging to the field formatter', () => {
                 const wrapper = mount(Table, {
                     propsData: {
-                        fields: [{key: 'name', formatter: () => 'nope'}],
-                        items: [{name: 'hoi'}],
+                        fields: [{ key: 'name', formatter: () => 'nope' }],
+                        items: [{ name: 'hoi' }],
                     },
                 });
 
@@ -156,7 +156,7 @@ describe('Vue minimal table', () => {
                 it('should render scoped slots #head', () => {
                     const wrapper = mount(Table, {
                         propsData: {
-                            fields: [{key: 'name'}],
+                            fields: [{ key: 'name' }],
                             items: [],
                         },
                         scopedSlots: {
@@ -169,7 +169,7 @@ describe('Vue minimal table', () => {
                 it('should render scoped slots #head()', () => {
                     const wrapper = mount(Table, {
                         propsData: {
-                            fields: [{key: 'name'}],
+                            fields: [{ key: 'name' }],
                             items: [],
                         },
                         scopedSlots: {
@@ -182,8 +182,8 @@ describe('Vue minimal table', () => {
                 it('should render a #row slot', () => {
                     const wrapper = mount(Table, {
                         propsData: {
-                            fields: [{key: 'name'}],
-                            items: [{name: 'foo bar'}],
+                            fields: [{ key: 'name' }],
+                            items: [{ name: 'foo bar' }],
                         },
                         scopedSlots: {
                             'row': `<div>Hoi</div>`,
@@ -195,8 +195,8 @@ describe('Vue minimal table', () => {
                 it('should render scoped slots #cell', () => {
                     const wrapper = mount(Table, {
                         propsData: {
-                            fields: [{key: 'name'}],
-                            items: [{name: 'foo bar'}],
+                            fields: [{ key: 'name' }],
+                            items: [{ name: 'foo bar' }],
                         },
                         scopedSlots: {
                             'cell': `<div>Hoi</div>`,
@@ -208,8 +208,8 @@ describe('Vue minimal table', () => {
                 it('should render scoped slots #cell()', () => {
                     const wrapper = mount(Table, {
                         propsData: {
-                            fields: [{key: 'name'}],
-                            items: [{name: 'foo bar'}],
+                            fields: [{ key: 'name' }],
+                            items: [{ name: 'foo bar' }],
                         },
                         scopedSlots: {
                             'cell()': `<div>Hoi</div>`,
@@ -221,8 +221,8 @@ describe('Vue minimal table', () => {
                 it('should render scoped slots #cell(name)', () => {
                     const wrapper = mount(Table, {
                         propsData: {
-                            fields: [{key: 'name'}],
-                            items: [{name: 'foo bar'}],
+                            fields: [{ key: 'name' }],
+                            items: [{ name: 'foo bar' }],
                         },
                         scopedSlots: {
                             'cell(name)': `<div>Hoi</div>`,
@@ -234,8 +234,8 @@ describe('Vue minimal table', () => {
                 it('should NOT render scoped slots #cell(does_not_exist)', () => {
                     const wrapper = mount(Table, {
                         propsData: {
-                            fields: [{key: 'name'}],
-                            items: [{name: 'foo bar'}],
+                            fields: [{ key: 'name' }],
+                            items: [{ name: 'foo bar' }],
                         },
                         scopedSlots: {
                             'cell(does_not_exist)': `<div>Hoi</div>`,
@@ -247,8 +247,8 @@ describe('Vue minimal table', () => {
                 it('should only render one slot per #cell', () => {
                     const wrapper = mount(Table, {
                         propsData: {
-                            fields: [{key: 'name'}],
-                            items: [{name: 'foo bar'}],
+                            fields: [{ key: 'name' }],
+                            items: [{ name: 'foo bar' }],
                         },
                         scopedSlots: {
                             'cell': `<div>cell 1</div>`,
@@ -263,8 +263,8 @@ describe('Vue minimal table', () => {
                 it('should render context scoped slots', () => {
                     const wrapper = mount(Table, {
                         propsData: {
-                            fields: [{key: 'name'}],
-                            items: [{name: 'foo bar'}],
+                            fields: [{ key: 'name' }],
+                            items: [{ name: 'foo bar' }],
                             getContext: () => 'foo_bar',
                         },
                         scopedSlots: {
@@ -277,8 +277,8 @@ describe('Vue minimal table', () => {
                 it('should render context based on field', () => {
                     const wrapper = mount(Table, {
                         propsData: {
-                            fields: [{key: 'name', getContext: () => 'foo_bar'}, {key: 'other'}],
-                            items: [{name: 'foo bar', other: 'other field content'}],
+                            fields: [{ key: 'name', getContext: () => 'foo_bar' }, { key: 'other' }],
+                            items: [{ name: 'foo bar', other: 'other field content' }],
                         },
                         scopedSlots: {
                             'cell@foo_bar': `<div>Hoi</div>`,
@@ -290,8 +290,8 @@ describe('Vue minimal table', () => {
                 it('should render context based on item', () => {
                     const wrapper = mount(Table, {
                         propsData: {
-                            fields: [{key: 'name'}],
-                            items: [{name: 'item 1', getContext: () => 'foo_bar'}, {name: 'item 2'}],
+                            fields: [{ key: 'name' }],
+                            items: [{ name: 'item 1', getContext: () => 'foo_bar' }, { name: 'item 2' }],
                         },
                         scopedSlots: {
                             'cell@foo_bar': `<div>Hoi</div>`,
@@ -303,8 +303,8 @@ describe('Vue minimal table', () => {
                 it('should not render invalid scoped slot name', () => {
                     const wrapper = mount(Table, {
                         propsData: {
-                            fields: [{key: 'name'}],
-                            items: [{name: 'foo bar'}],
+                            fields: [{ key: 'name' }],
+                            items: [{ name: 'foo bar' }],
                             getContext: () => 'foo_bar',
                         },
                         scopedSlots: {
@@ -317,8 +317,8 @@ describe('Vue minimal table', () => {
                 it('should render context scoped slots cell scoped', () => {
                     const wrapper = mount(Table, {
                         propsData: {
-                            fields: [{key: 'name'}],
-                            items: [{name: 'foo bar'}],
+                            fields: [{ key: 'name' }],
+                            items: [{ name: 'foo bar' }],
                             getContext: () => 'foo_bar',
                         },
                         scopedSlots: {
@@ -331,8 +331,8 @@ describe('Vue minimal table', () => {
                 it('should render context scoped slots over normal slot', () => {
                     const wrapper = mount(Table, {
                         propsData: {
-                            fields: [{key: 'name'}],
-                            items: [{name: 'foo bar'}],
+                            fields: [{ key: 'name' }],
+                            items: [{ name: 'foo bar' }],
                             getContext: () => 'foo_bar',
                         },
                         scopedSlots: {
@@ -346,8 +346,8 @@ describe('Vue minimal table', () => {
                 it('should render cell scoped slots over context slot', () => {
                     const wrapper = mount(Table, {
                         propsData: {
-                            fields: [{key: 'name'}],
-                            items: [{name: 'foo bar'}],
+                            fields: [{ key: 'name' }],
+                            items: [{ name: 'foo bar' }],
                             getContext: () => 'foo_bar',
                         },
                         scopedSlots: {
@@ -361,8 +361,8 @@ describe('Vue minimal table', () => {
                 it('render correct slot if all kinds are provided NO context', () => {
                     const wrapper = mount(Table, {
                         propsData: {
-                            fields: [{key: 'name'}],
-                            items: [{name: 'foo bar'}],
+                            fields: [{ key: 'name' }],
+                            items: [{ name: 'foo bar' }],
                         },
                         scopedSlots: {
                             'cell': `<div>cell</div>`,
@@ -379,8 +379,8 @@ describe('Vue minimal table', () => {
                 it('render correct slot if all kinds are provided with context', () => {
                     const wrapper = mount(Table, {
                         propsData: {
-                            fields: [{key: 'name'}],
-                            items: [{name: 'foo bar'}],
+                            fields: [{ key: 'name' }],
+                            items: [{ name: 'foo bar' }],
                             getContext: () => 'foo_bar',
                         },
                         scopedSlots: {
@@ -399,7 +399,7 @@ describe('Vue minimal table', () => {
             it('should render data returned using formatter', () => {
                 const wrapper = mount(Table, {
                     propsData: {
-                        fields: [{key: 'name', formatter: () => 'Hoi'}],
+                        fields: [{ key: 'name', formatter: () => 'Hoi' }],
                         items: [{}],
                     },
                 });
@@ -409,8 +409,8 @@ describe('Vue minimal table', () => {
             it('should render data returned using formatter using item data', () => {
                 const wrapper = mount(Table, {
                     propsData: {
-                        fields: [{key: 'name', formatter: item => item.customProperty}],
-                        items: [{customProperty: 'Hoi'}],
+                        fields: [{ key: 'name', formatter: item => item.customProperty }],
+                        items: [{ customProperty: 'Hoi' }],
                     },
                 });
                 assert.strictEqual(wrapper.find('td').text(), 'Hoi');
@@ -419,36 +419,36 @@ describe('Vue minimal table', () => {
             it('should render multiple rows of data', () => {
                 const wrapper = mount(Table, {
                     propsData: {
-                        fields: [{key: 'name'}],
-                        items: [{name: 'foo'}, {name: 'bar'}],
+                        fields: [{ key: 'name' }],
+                        items: [{ name: 'foo' }, { name: 'bar' }],
                     },
                 });
 
                 assert.deepStrictEqual(wrapper.findAll('td').wrappers.map(d => d.text()), ['foo', 'bar']);
             });
 
-            it('should render changes made to items', async() => {
+            it('should render changes made to items', async () => {
                 const wrapper = mount(Table, {
                     propsData: {
-                        fields: [{key: 'name'}],
-                        items: [{name: 'foo'}],
+                        fields: [{ key: 'name' }],
+                        items: [{ name: 'foo' }],
                     },
                 });
 
-                await wrapper.setProps({items: [{name: 'foo'}, {name: 'bar'}]});
+                await wrapper.setProps({ items: [{ name: 'foo' }, { name: 'bar' }] });
                 assert.deepStrictEqual(wrapper.findAll('td').wrappers.map(d => d.text()), ['foo', 'bar']);
 
-                await wrapper.setProps({items: [{name: 'foo'}, {name: 'bar'}, {name: 'baz'}]});
+                await wrapper.setProps({ items: [{ name: 'foo' }, { name: 'bar' }, { name: 'baz' }] });
                 assert.deepStrictEqual(wrapper.findAll('td').wrappers.map(d => d.text()), ['foo', 'bar', 'baz']);
 
-                await wrapper.setProps({items: [{name: 'hoi'}]});
+                await wrapper.setProps({ items: [{ name: 'hoi' }] });
                 assert.deepStrictEqual(wrapper.findAll('td').wrappers.map(d => d.text()), ['hoi']);
             });
 
             it('should render loading if busy', () => {
                 const wrapper = mount(Table, {
                     propsData: {
-                        fields: [{key: 'name'}],
+                        fields: [{ key: 'name' }],
                         busy: true,
                     },
                 });
@@ -457,63 +457,133 @@ describe('Vue minimal table', () => {
                 assert.strictEqual(wrapper.find('td').text(), 'Loading...');
             });
 
-            it('should render loading or items when busy it toggled', async() => {
+            it('should render loading or items when busy it toggled', async () => {
                 const wrapper = mount(Table, {
                     propsData: {
-                        fields: [{key: 'name'}],
-                        items: [{name: 'foo'}, {name: 'bar'}, {name: 'baz'}],
+                        fields: [{ key: 'name' }],
+                        items: [{ name: 'foo' }, { name: 'bar' }, { name: 'baz' }],
                         busy: false,
                     },
                 });
 
                 assert.strictEqual(wrapper.findAll('td').wrappers.length, 3);
 
-                await wrapper.setProps({busy: true});
+                await wrapper.setProps({ busy: true });
                 assert.strictEqual(wrapper.findAll('td').wrappers.length, 1);
                 assert.strictEqual(wrapper.find('td').text(), 'Loading...');
 
-                await wrapper.setProps({busy: false});
+                await wrapper.setProps({ busy: false });
                 assert.strictEqual(wrapper.findAll('td').wrappers.length, 3);
             });
 
-            it('should render lines in correct order when sort is provided', () => {
-                const wrapper = mount(Table, {
-                    propsData: {
-                        sortBy: 'name',
-                        sort: 'ascending',
-                        fields: [{key: 'name'}],
-                        items: [{name: 'foo'}, {name: 'bar'}],
-                    },
+            describe('sorting', () => {
+                it('should render lines in correct order when sort is provided', () => {
+                    const wrapper = mount(Table, {
+                        propsData: {
+                            sortBy: 'name',
+                            sort: 'ascending',
+                            fields: [{ key: 'name' }],
+                            items: [{ name: 'foo' }, { name: 'bar' }],
+                        },
+                    });
+
+                    assert.deepStrictEqual(wrapper.findAll('td').wrappers.map(d => d.text()), ['bar', 'foo']);
                 });
 
-                assert.deepStrictEqual(wrapper.findAll('td').wrappers.map(d => d.text()), ['bar', 'foo']);
-            });
+                it('should render lines in correct order when sort changes', async () => {
+                    const wrapper = mount(Table, {
+                        propsData: {
+                            sortBy: 'name',
+                            sort: 'ascending',
+                            fields: [{ key: 'name' }],
+                            items: [{ name: 'foo' }, { name: 'bar' }],
+                        },
+                    });
 
-            it('should render lines in correct order when sort changes', async() => {
-                const wrapper = mount(Table, {
-                    propsData: {
-                        sortBy: 'name',
-                        sort: 'ascending',
-                        fields: [{key: 'name'}],
-                        items: [{name: 'foo'}, {name: 'bar'}],
-                    },
+                    assert.deepStrictEqual(wrapper.findAllComponents(Cell).wrappers.map(d => d.text()), ['bar', 'foo']);
+
+                    await wrapper.setProps({ sort: 'descending' });
+                    assert.deepStrictEqual(wrapper.findAllComponents(Cell).wrappers.map(d => d.text()), ['foo', 'bar']);
+
+                    await wrapper.setProps({ sort: 'ascending' });
+                    assert.deepStrictEqual(wrapper.findAllComponents(Cell).wrappers.map(d => d.text()), ['bar', 'foo']);
                 });
 
-                assert.deepStrictEqual(wrapper.findAllComponents(Cell).wrappers.map(d => d.text()), ['bar', 'foo']);
+                it('should sort when a sortBy prop was passed', () => {
+                    const wrapper = mount(Table, {
+                        propsData: {
+                            fields: [{ key: 'name' }],
+                            items: [{ name: 'Xantippe' }, { name: 'Adam' }, { name: 'Harry' }],
+                            sortBy: 'name',
+                        },
+                    });
+                    const tds = wrapper.findAllComponents(Cell);
+                    const tableNames = [];
+                    for (let i = 0; i < tds.length; i++) {
+                        tableNames.push(tds.at(i).text());
+                    }
+                    const sortedNames = ['Adam', 'Harry', 'Xantippe'];
+                    assert.deepStrictEqual(sortedNames, tableNames);
+                });
 
-                await wrapper.setProps({sort: 'descending'});
-                assert.deepStrictEqual(wrapper.findAllComponents(Cell).wrappers.map(d => d.text()), ['foo', 'bar']);
+                it('should sort when sortFn prop was passed', () => {
+                    const wrapper = mount(Table, {
+                        propsData: {
+                            fields: [{ key: 'name' }],
+                            items: [{ name: 'Xantippe' }, { name: 'Adam' }, { name: 'Harry' }],
+                            sortFn: (a, b) => {
+                                if (a.name < b.name) {
+                                    return -1;
+                                }
+                                if (a.name > b.name) {
+                                    return 1;
+                                }
+                                return 0;
+                            },
+                        },
+                    });
+                    const tds = wrapper.findAllComponents(Cell);
+                    const tableNames = [];
+                    for (let i = 0; i < tds.length; i++) {
+                        tableNames.push(tds.at(i).text());
+                    }
+                    const sortedNames = ['Adam', 'Harry', 'Xantippe'];
+                    assert.deepStrictEqual(sortedNames, tableNames);
+                });
 
-                await wrapper.setProps({sort: 'ascending'});
-                assert.deepStrictEqual(wrapper.findAllComponents(Cell).wrappers.map(d => d.text()), ['bar', 'foo']);
+                it('should sort descending when sortFn and sort props was passed', () => {
+                    const wrapper = mount(Table, {
+                        propsData: {
+                            fields: [{ key: 'name' }],
+                            items: [{ name: 'Xantippe' }, { name: 'Adam' }, { name: 'Harry' }],
+                            sortFn: (a, b) => {
+                                if (a.name < b.name) {
+                                    return -1;
+                                }
+                                if (a.name > b.name) {
+                                    return 1;
+                                }
+                                return 0;
+                            },
+                            sort: 'descending'
+                        },
+                    });
+                    const tds = wrapper.findAllComponents(Cell);
+                    const tableNames = [];
+                    for (let i = 0; i < tds.length; i++) {
+                        tableNames.push(tds.at(i).text());
+                    }
+                    const sortedNames = ['Xantippe', 'Harry', 'Adam'];
+                    assert.deepStrictEqual(sortedNames, tableNames);
+                });
             });
 
             it('should emit when a row is clicked', () => {
                 let testResult = false;
                 const wrapper = mount(Table, {
                     propsData: {
-                        fields: [{key: 'name'}],
-                        items: [{name: 'hoi!'}],
+                        fields: [{ key: 'name' }],
+                        items: [{ name: 'hoi!' }],
                     },
                     listeners: {
                         'row-clicked': () => {
@@ -531,8 +601,8 @@ describe('Vue minimal table', () => {
                 let testResult = false;
                 const wrapper = mount(Table, {
                     propsData: {
-                        fields: [{key: 'name', formatter: () => 'harry'}],
-                        items: [{name: 'hoi!'}],
+                        fields: [{ key: 'name', formatter: () => 'harry' }],
+                        items: [{ name: 'hoi!' }],
                     },
                     listeners: {
                         'row-clicked': () => {
@@ -550,8 +620,8 @@ describe('Vue minimal table', () => {
                 let testResult = false;
                 const wrapper = mount(Table, {
                     propsData: {
-                        fields: [{key: 'name'}],
-                        items: [{name: 'hoi!'}],
+                        fields: [{ key: 'name' }],
+                        items: [{ name: 'hoi!' }],
                     },
                 });
                 const row = wrapper.findAllComponents(Cell);
@@ -564,8 +634,8 @@ describe('Vue minimal table', () => {
                 let testResult = false;
                 const wrapper = mount(Table, {
                     propsData: {
-                        fields: [{key: 'name', formatter: () => 'harry'}],
-                        items: [{name: 'hoi!'}],
+                        fields: [{ key: 'name', formatter: () => 'harry' }],
+                        items: [{ name: 'hoi!' }],
                     },
                 });
                 const row = wrapper.findComponent(Cell);
@@ -573,35 +643,16 @@ describe('Vue minimal table', () => {
 
                 assert.strictEqual(testResult, false);
             });
-
-            it('should sort when a sortBy prop was passed', () => {
-                const wrapper = mount(Table, {
-                    propsData: {
-                        fields: [{key: 'name'}],
-                        items: [{name: 'Xantippe'}, {name: 'Adam'}, {name: 'Harry'}],
-                        sortBy: 'name',
-                    },
-                });
-                const tds = wrapper.findAllComponents(Cell);
-                const tableNames = [];
-                for (let i = 0; i < tds.length; i++) {
-                    tableNames.push(tds.at(i).text());
-                }
-                const sortedNames = ['Adam', 'Harry', 'Xantippe'];
-                assert.deepStrictEqual(sortedNames, tableNames);
-            });
-
-            // TODO :: not all sorting lines are covered
         });
     });
 
     describe('tdClass & thClass argument', () => {
         ['tdClass', 'thClass'].map(name => {
-            it(name+" with simple string should appear in dom", () => {
+            it(name + " with simple string should appear in dom", () => {
                 const wrapper = mount(Table, {
                     propsData: {
-                        fields: [{key: 'name', [name]: 'rood'}],
-                        items: [{name: 'hoi'}],
+                        fields: [{ key: 'name', [name]: 'rood' }],
+                        items: [{ name: 'hoi' }],
                     },
                 });
                 if (name == 'thClass') {
@@ -611,11 +662,11 @@ describe('Vue minimal table', () => {
                 }
             });
 
-            it(name+" with multiple in one string should appear in dom", () => {
+            it(name + " with multiple in one string should appear in dom", () => {
                 const wrapper = mount(Table, {
                     propsData: {
-                        fields: [{key: 'name', [name]: 'foo bar'}],
-                        items: [{name: 'hoi'}],
+                        fields: [{ key: 'name', [name]: 'foo bar' }],
+                        items: [{ name: 'hoi' }],
                     },
                 });
                 if (name == 'thClass') {
@@ -625,11 +676,11 @@ describe('Vue minimal table', () => {
                 }
             });
 
-            it(name+" with multiple in array should appear in dom", () => {
+            it(name + " with multiple in array should appear in dom", () => {
                 const wrapper = mount(Table, {
                     propsData: {
-                        fields: [{key: 'name', [name]: ['foo', 'bar']}],
-                        items: [{name: 'hoi'}],
+                        fields: [{ key: 'name', [name]: ['foo', 'bar'] }],
+                        items: [{ name: 'hoi' }],
                     },
                 });
                 if (name == 'thClass') {
@@ -639,11 +690,11 @@ describe('Vue minimal table', () => {
                 }
             });
 
-            it(name+" with function returning string should appear in dom", () => {
+            it(name + " with function returning string should appear in dom", () => {
                 const wrapper = mount(Table, {
                     propsData: {
-                        fields: [{key: 'name', [name]: () => 'foo bar'}],
-                        items: [{name: 'hoi'}],
+                        fields: [{ key: 'name', [name]: () => 'foo bar' }],
+                        items: [{ name: 'hoi' }],
                     },
                 });
                 if (name == 'thClass') {
@@ -653,11 +704,11 @@ describe('Vue minimal table', () => {
                 }
             });
 
-            it(name+" with function returning array should appear in dom", () => {
+            it(name + " with function returning array should appear in dom", () => {
                 const wrapper = mount(Table, {
                     propsData: {
-                        fields: [{key: 'name', [name]: () => ['foo', 'bar']}],
-                        items: [{name: 'hoi'}],
+                        fields: [{ key: 'name', [name]: () => ['foo', 'bar'] }],
+                        items: [{ name: 'hoi' }],
                     },
                 });
                 if (name == 'thClass') {
@@ -667,11 +718,11 @@ describe('Vue minimal table', () => {
                 }
             });
 
-            it(name+" should have no added classes when none are provided", () => {
+            it(name + " should have no added classes when none are provided", () => {
                 const wrapper = mount(Table, {
                     propsData: {
-                        fields: [{key: 'name'}],
-                        items: [{name: 'hoi'}],
+                        fields: [{ key: 'name' }],
+                        items: [{ name: 'hoi' }],
                     },
                 });
 
